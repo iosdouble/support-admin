@@ -117,3 +117,8 @@ xss:
   excludes: /system/notice/*
   # 匹配链接
   urlPatterns: /system/*,/monitor/*,/tool/*
+
+weixin:
+  url: https://api.weixin.qq.com/cgi-bin/token
+  appid: wx4f1f457374b8471e
+  secret: 21b1b11412301babdd5071f3025c92cf
