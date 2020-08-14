@@ -2,6 +2,8 @@ package com.zk.system.mapper;
 
 import java.util.List;
 import com.zk.system.domain.WxkqMustBaseInfo;
+import org.apache.ibatis.annotations.Mapper;
+import org.mybatis.spring.annotation.MapperScan;
 
 /**
  * 微信卡券基础信息必填信息 Mapper接口
@@ -9,6 +11,7 @@ import com.zk.system.domain.WxkqMustBaseInfo;
  * @author ruoyi
  * @date 2020-08-14
  */
+@Mapper
 public interface WxkqMustBaseInfoMapper 
 {
     /**
