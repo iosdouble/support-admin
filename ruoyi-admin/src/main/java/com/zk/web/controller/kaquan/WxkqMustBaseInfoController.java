@@ -101,4 +101,6 @@ public class WxkqMustBaseInfoController extends BaseController
         return toAjax(wxkqMustBaseInfoService.deleteWxkqMustBaseInfoByIds(ids));
     }
 
+
+
 }

@@ -13,6 +13,7 @@ import com.zk.common.annotation.Excel;
  * 
  * @author ${author}
  * @date ${datetime}
+ * @version 1.0
  */
 #if($table.crud)
 #set($Entity="BaseEntity")
