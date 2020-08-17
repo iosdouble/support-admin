@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import da from "element-ui/src/locale/lang/da";
 
 // 查询微信卡券基础信息必填信息 列表
 export function listInfo(query) {
@@ -17,7 +18,7 @@ export function getInfo(id) {
   })
 }
 
-// 新增微信卡券基础信息必填信息 
+// 新增微信卡券基础信息必填信息
 export function addInfo(data) {
   return request({
     url: '/system/info',
@@ -26,7 +27,7 @@ export function addInfo(data) {
   })
 }
 
-// 修改微信卡券基础信息必填信息 
+// 修改微信卡券基础信息必填信息
 export function updateInfo(data) {
   return request({
     url: '/system/info',
@@ -35,7 +36,7 @@ export function updateInfo(data) {
   })
 }
 
-// 删除微信卡券基础信息必填信息 
+// 删除微信卡券基础信息必填信息
 export function delInfo(id) {
   return request({
     url: '/system/info/' + id,
@@ -43,11 +44,26 @@ export function delInfo(id) {
   })
 }
 
-// 导出微信卡券基础信息必填信息 
+// 导出微信卡券基础信息必填信息
 export function exportInfo(query) {
   return request({
     url: '/system/info/export',
     method: 'get',
     params: query
+  })
+}
+
+export function createCard(data) {
+  return request({
+    url: '/kaqu/createCard',
+    method: 'post',
+    data: data
+  })
+}
+
+export function getInfoList(data) {
+  return request({
+    url: '/kaqu/list',
+    method: 'get',
   })
 }

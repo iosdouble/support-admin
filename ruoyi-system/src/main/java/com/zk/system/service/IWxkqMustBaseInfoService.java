@@ -1,6 +1,9 @@
 package com.zk.system.service;
 
 import java.util.List;
+
+
+import com.zk.system.domain.po.InsertCreateCardRecordPo;
 import com.zk.system.domain.WxkqMustBaseInfo;
 
 /**
@@ -30,10 +33,10 @@ public interface IWxkqMustBaseInfoService
     /**
      * 新增微信卡券基础信息必填信息 
      * 
-     * @param wxkqMustBaseInfo 微信卡券基础信息必填信息 
+     * @param insertCreateCardRecordPo 微信卡券基础信息必填信息
      * @return 结果
      */
-    public int insertWxkqMustBaseInfo(WxkqMustBaseInfo wxkqMustBaseInfo);
+    public int insertWxkqMustBaseInfo(InsertCreateCardRecordPo insertCreateCardRecordPo);
 
     /**
      * 修改微信卡券基础信息必填信息 

@@ -1,9 +1,14 @@
 package com.zk.web.controller.kaquan;
 
+import com.zk.common.annotation.Log;
+import com.zk.common.constant.WXUrlConstants;
+import com.zk.common.constant.WXcodeTypeConstants;
+import com.zk.common.core.controller.BaseController;
+import com.zk.common.core.page.TableDataInfo;
+import com.zk.common.enums.BusinessType;
 import com.zk.common.utils.http.HttpClientUtil;
 import com.zk.common.utils.idgenerator.SnowflakeIdUtils;
 import com.zk.common.utils.json.JsonUtil;
-import com.zk.framework.web.service.TokenService;
 import com.zk.framework.weixin.domain.bean.GroupOn;
 import com.zk.framework.weixin.domain.req.CardRsq;
 import com.zk.framework.weixin.domain.bean.CreateCard;
@@ -16,13 +21,13 @@ import com.zk.framework.weixin.domain.bean.entity.DateInfo;
 import com.zk.framework.weixin.domain.bean.entity.SKU;
 import com.zk.framework.weixin.domain.req.*;
 import com.zk.framework.weixin.domain.resp.CreateCardSuccessResp;
+import com.zk.framework.weixin.domain.vo.CreateCardVo;
 import com.zk.system.domain.WxkqCreateCardRecord;
 import com.zk.system.service.IWxkqCreateCardRecordService;
+import com.zk.system.service.IWxkqMustBaseInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.activation.MimetypesFileTypeMap;
@@ -40,35 +45,106 @@ import java.util.*;
  * @Description TokenController @see ruoyi
  */
 @RestController
-public class TokenController {
+@RequestMapping("/kaqu")
+public class TokenController extends BaseController {
 
     @Autowired
     private WeixinGetToken weixinGetToken;
 
 
     @Autowired
-    private TokenService tokenService;
-
-    @Autowired
     private IWxkqCreateCardRecordService wxkqCreateCardRecordService;
 
+    @Autowired
+    private IWxkqMustBaseInfoService wxkqMustBaseInfoService;
 
-    @GetMapping("/getToken")
-    public String getToke() {
-//        launchCard();
-
-        // pKGjp0jNzIQqtZp9-fScdQFvGqfI
-
-
-        // pWHBzswN7isz08dXtPRpw7yqqfRw
-
+//
+//    @GetMapping("/getToken")
+//    public String getToke() {
+////        launchCard();
+//
+//        // pKGjp0jNzIQqtZp9-fScdQFvGqfI
+//
+//
+//        // pWHBzswN7isz08dXtPRpw7yqqfRw
+//
 //        createCard();
-//        inputCode();
-//        checkCodeCount();
-//        checkCode();
-//        setTestUser();
-        getCode();
-        return "Hello OK!";
+////        inputCode();
+////        checkCodeCount();
+////        checkCode();
+////        setTestUser();
+//        getCode();
+//        return "Hello OK!";
+//    }
+
+    @PostMapping("/createCard")
+    @PreAuthorize("@ss.hasPermi('system:info:add')")
+    @Log(title = "微信卡券基础信息必填信息 ", businessType = BusinessType.INSERT)
+    public String createCard(@RequestBody CreateCardVo createCardVo) {
+        System.out.println(createCardVo.toString());
+
+        AccessToken token = weixinGetToken.getToken();
+        String url = WXUrlConstants.CREATE_CARD + "?access_token=" + token.getAccess_token();
+
+        SKU sku = new SKU(0);
+        DateInfo dateInfo = new DateInfo();
+        dateInfo.setType("DATE_TYPE_FIX_TIME_RANGE");
+        dateInfo.setBegin_timestamp(1578670800L);
+        dateInfo.setEnd_timestamp(1602344400L);
+
+        BaseCodeInfo baseCodeInfo = new BaseCodeInfo();
+        baseCodeInfo.setLogo_url("http://mmbiz.qpic.cn/mmbiz_png/B3zBXUpXXBX3y9ibfqWvN7NerZ86CtjT960IjMMOaiaEaNHjBPBicaGo6tMtIn0rqUJp4wuR24PjcO5WgLbNlJORQ/0");
+        baseCodeInfo.setCode_type(WXcodeTypeConstants.CODE_TYPE_QRCODE);
+        baseCodeInfo.setTitle("微信卡券");
+        baseCodeInfo.setBrand_name("微信餐厅");
+        baseCodeInfo.setColor("Color010");
+        baseCodeInfo.setNotice("使用时向服务员出示此券");
+        baseCodeInfo.setDescription("不可与其他优惠同享");
+        baseCodeInfo.setUse_custom_code(true);
+        baseCodeInfo.setGet_custom_code_mode("GET_CUSTOM_CODE_MODE_DEPOSIT");
+        baseCodeInfo.setSku(sku);
+        baseCodeInfo.setDate_info(dateInfo);
+        GroupOn groupOn = new GroupOn();
+        groupOn.setDeal_detail("示例");
+        groupOn.setBase_info(baseCodeInfo);
+        CardRsq card = new CardRsq();
+        card.setGroupon(groupOn);
+        card.setCard_type("GROUPON");
+        CreateCard createCard = new CreateCard();
+        createCard.setCard(card);
+        System.out.println(JsonUtil.toJson(createCard));
+        String str = JsonUtil.toJson(createCard);
+
+
+        WxkqCreateCardRecord wxkqCreateCardRecord = new WxkqCreateCardRecord();
+
+        String s1 = HttpClientUtil.sendPostJsonBody(url, str);
+        CreateCardSuccessResp createCardSuccessResp = JsonUtil.toObject(s1, CreateCardSuccessResp.class);
+        SnowflakeIdUtils snowflakeIdUtils = new SnowflakeIdUtils(1, 1);
+        wxkqCreateCardRecord.setId(snowflakeIdUtils.nextId());
+        wxkqCreateCardRecord.setCardId(createCardSuccessResp.getCard_id());
+        wxkqCreateCardRecord.setCardType(card.getCard_type());
+        wxkqCreateCardRecord.setCreateBy("system");
+        wxkqCreateCardRecord.setUseCustomCode(0);
+        wxkqCreateCardRecord.setCreateTime(new Date());
+        wxkqCreateCardRecord.setErrcode(createCardSuccessResp.getErrcode());
+        wxkqCreateCardRecord.setErrmsg(createCardSuccessResp.getErrmsg());
+        wxkqCreateCardRecord.setCardId(createCardSuccessResp.getCard_id());
+        wxkqCreateCardRecord.setStatus(0);
+        wxkqCreateCardRecord.setDelFlag(0);
+        wxkqCreateCardRecordService.insertRecord(wxkqCreateCardRecord);
+
+
+        System.out.println(s1);
+
+        return "OK";
+    }
+
+    @GetMapping("/list")
+    public TableDataInfo getCreateCardInfoList(){
+        startPage();
+        List<WxkqCreateCardRecord> wxkqCreateCardRecords = wxkqCreateCardRecordService.queueAll();
+        return getDataTable(wxkqCreateCardRecords);
     }
 
     /**
@@ -190,11 +266,12 @@ public class TokenController {
 
     /**
      * 实现图片上传功能
+     *
      * @param file
      * @return
      */
     @RequestMapping(value = "/upload")
-    public String upload(@RequestParam(value = "file") MultipartFile file){
+    public String upload(@RequestParam(value = "file") MultipartFile file) {
         if (file.isEmpty()) {
             System.out.println("文件为空");
         }
@@ -212,7 +289,6 @@ public class TokenController {
         }
         return filePath;
     }
-
 
 
     /**
@@ -255,11 +331,11 @@ public class TokenController {
         String str = JsonUtil.toJson(createCard);
 
 
-        WxkqCreateCardRecord wxkqCreateCardRecord  = new WxkqCreateCardRecord();
+        WxkqCreateCardRecord wxkqCreateCardRecord = new WxkqCreateCardRecord();
         try {
             String s1 = HttpClientUtil.sendPostJsonBody(url, str);
             CreateCardSuccessResp createCardSuccessResp = JsonUtil.toObject(s1, CreateCardSuccessResp.class);
-            SnowflakeIdUtils snowflakeIdUtils = new SnowflakeIdUtils(1,1);
+            SnowflakeIdUtils snowflakeIdUtils = new SnowflakeIdUtils(1, 1);
             wxkqCreateCardRecord.setId(snowflakeIdUtils.nextId());
             wxkqCreateCardRecord.setCardId(createCardSuccessResp.getCard_id());
             wxkqCreateCardRecord.setCardType(card.getCard_type());
@@ -281,7 +357,6 @@ public class TokenController {
         }
 
 
-
     }
     /**
      * 配置审核通过接口
@@ -292,9 +367,7 @@ public class TokenController {
      * https://api.weixin.qq.com/card/qrcode/create?access_token=TOKEN
      */
 
-    public void launchCard(){
-
-
+    public void launchCard() {
 
 
         AccessToken token = weixinGetToken.getToken();
@@ -325,13 +398,13 @@ public class TokenController {
      * http://api.weixin.qq.com/card/code/deposit?access_token=ACCESS_TOKEN
      */
 
-    public void inputCode(){
+    public void inputCode() {
         AccessToken token = weixinGetToken.getToken();
         String url = "http://api.weixin.qq.com/card/code/deposit?access_token=" + token.getAccess_token();
         InputCodeRsq inputCode = new InputCodeRsq();
         inputCode.setCard_id("pWHBzs9bUHwU56R8idTgwyV62gXM");
         List<String> codes = new ArrayList<>();
-        SnowflakeIdUtils snowflakeIdUtils = new SnowflakeIdUtils(1,1);
+        SnowflakeIdUtils snowflakeIdUtils = new SnowflakeIdUtils(1, 1);
         for (int i = 0; i < 80; i++) {
             long l = snowflakeIdUtils.nextId();
             codes.add(String.valueOf(l));
@@ -346,7 +419,7 @@ public class TokenController {
      * 查询导入的Code
      * http://api.weixin.qq.com/card/code/getdepositcount?access_token=ACCESS_TOKEN
      */
-    public void checkCodeCount(){
+    public void checkCodeCount() {
 
         AccessToken token = weixinGetToken.getToken();
         String url = "http://api.weixin.qq.com/card/code/getdepositcount?access_token=" + token.getAccess_token();
@@ -366,7 +439,7 @@ public class TokenController {
      * 核查Code
      * http://api.weixin.qq.com/card/code/checkcode?access_token=ACCESS_TOKEN
      */
-    public  void checkCode(){
+    public void checkCode() {
 
         AccessToken token = weixinGetToken.getToken();
         String url = "http://api.weixin.qq.com/card/code/checkcode?access_token=" + token.getAccess_token();
@@ -376,7 +449,7 @@ public class TokenController {
         List<String> codelist = new ArrayList<>();
         String str = "744236683645554688,744236683645554689,744236683645554690,744236683645554691,744236683645554692,744236683645554693,744236683645554694,744236683645554695,744236683645554696,744236683645554697,744236683645554698,744236683645554699,744236683645554700,744236683645554701,744236683645554702,744236683645554703,744236683645554704,744236683645554705,744236683645554706,744236683645554707,744236683645554708,744236683645554709,744236683645554710,744236683645554711,744236683645554712,744236683645554713,744236683645554714,744236683645554715,744236683645554716,744236683645554717,744236683645554718,744236683645554719,744236683645554720,744236683645554721,744236683645554722,744236683645554723,744236683645554724,744236683645554725,744236683645554726,744236683645554727,744236683645554728,744236683645554729,744236683645554730,744236683645554731,744236683645554732,744236683645554733,744236683645554734,744236683645554735,744236683645554736,744236683645554737,744236683645554738,744236683645554739,744236683645554740,744236683645554741,744236683645554742,744236683645554743,744236683645554744,744236683645554745,744236683645554746,744236683645554747,744236683645554748,744236683645554749,744236683645554750,744236683645554751,744236683645554752,744236683645554753,744236683645554754,744236683645554755,744236683645554756,744236683645554757,744236683645554758,744236683645554759,744236683645554760,744236683645554761,744236683645554762,744236683645554763,744236683645554764,744236683645554765,744236683645554766,744236683645554767";
         String[] split = str.split(",");
-        for (int i = 0; i <split.length ; i++) {
+        for (int i = 0; i < split.length; i++) {
             codelist.add(split[i]);
         }
         checkCodeReq.setCode(codelist);
@@ -388,13 +461,12 @@ public class TokenController {
     }
 
 
-
     /**
      * 查询卡券是否成功
      * https://api.weixin.qq.com/card/code/get?access_token=TOKEN
      */
 
-    public void getCode(){
+    public void getCode() {
 
         AccessToken token = weixinGetToken.getToken();
         String url = "https://api.weixin.qq.com/card/code/get?access_token=" + token.getAccess_token();
@@ -411,20 +483,18 @@ public class TokenController {
     }
 
 
-
-
     /**
      * 配置卡券白名单
      * https://api.weixin.qq.com/card/testwhitelist/set?access_token=TOKEN
      */
 
-    public void setTestUser(){
+    public void setTestUser() {
 
         AccessToken token = weixinGetToken.getToken();
         String url = "https://api.weixin.qq.com/card/testwhitelist/set?access_token=" + token.getAccess_token();
         List<String> openids = new ArrayList<>();
         openids.add("");
-        List<String> usernames =  new ArrayList<>();
+        List<String> usernames = new ArrayList<>();
         usernames.add("");
         SetTestUserRsq setTestUser = new SetTestUserRsq();
         setTestUser.setOpenid(openids);

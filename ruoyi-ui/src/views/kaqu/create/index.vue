@@ -94,27 +94,68 @@
       @pagination="getList"
     />
 
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="60%" append-to-body>
 
       <el-form ref="form" :model="form" label-width="80px">
+        <el-form-item label="商家Logo">
+          <el-input v-model="form.logo_url"></el-input>
+        </el-form-item>
+        <el-form-item label="卡券标题">
+          <el-input v-model="form.title"></el-input>
+        </el-form-item>
+        <el-form-item label="商家名称">
+          <el-input v-model="form.brandName"></el-input>
+        </el-form-item>
+        <el-form-item label="颜色">
+          <el-input v-model="form.color"></el-input>
+        </el-form-item>
+        <el-form-item label="使用提醒">
+          <el-input v-model="form.notice"></el-input>
+        </el-form-item>
+        <el-form-item label="使用说明">
+          <el-input v-model="form.description"></el-input>
+        </el-form-item>
+        <el-form-item label="卡券说明">
+          <el-input v-model="form.card_details"></el-input>
+        </el-form-item>
         <el-form-item label="卡券类型">
-          <el-radio-group v-model="form.resource">
-            <el-radio label="折扣券"></el-radio>
-            <br>
-            <el-radio label="代金券"></el-radio>
-            <br>
-            <el-radio label="兑换券"></el-radio>
-            <br>
-            <el-radio label="团购券"></el-radio>
-            <br>
-            <el-radio label="优惠券"></el-radio>
+          <el-select v-model="form.cardType" placeholder="请选择卡券类型">
+            <el-option label="二维码" value="1"></el-option>
+            <el-option label="一维码" value="2"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="时间类型">
+          <el-select v-model="form.dateType" placeholder="请选择活动区域">
+            <el-option label="固定日期" value="1"></el-option>
+            <el-option label="固定时长" value="2"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="开始时间">
+          <el-col :span="11">
+            <el-date-picker type="date" placeholder="选择日期" v-model="form.sday" style="width: 100%;"></el-date-picker>
+          </el-col>
+          <el-col class="line" :span="2">-</el-col>
+          <el-col :span="11">
+            <el-time-picker placeholder="选择时间" v-model="form.stime" style="width: 100%;"></el-time-picker>
+          </el-col>
+        </el-form-item>
+        <el-form-item label="结束时间">
+          <el-col :span="11">
+            <el-date-picker type="date" placeholder="选择日期" v-model="form.eday" style="width: 100%;"></el-date-picker>
+          </el-col>
+          <el-col class="line" :span="2">-</el-col>
+          <el-col :span="11">
+            <el-time-picker placeholder="选择时间" v-model="form.etime" style="width: 100%;"></el-time-picker>
+          </el-col>
+        </el-form-item>
 
-          </el-radio-group>
+        <el-form-item label="初始容量">
+          <el-input v-model="form.quantity"></el-input>
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" @click="onSubmit">立即创建</el-button>
-          <el-button>取消</el-button>
+          <el-button type="primary" @click="submitForm">立即创建</el-button>
+          <el-button @click="cancel">取消</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -123,7 +164,7 @@
 </template>
 
 <script>
-    import { listInfo, getInfo, delInfo, addInfo, updateInfo, exportInfo } from "@/api/system/info";
+    import { listInfo, getInfo, delInfo, addInfo, updateInfo, exportInfo ,createCard,getInfoList} from "@/api/system/info";
 
     export default {
         name: "Info",
@@ -179,7 +220,7 @@
             /** 查询微信卡券基础信息必填信息 列表 */
             getList() {
                 this.loading = true;
-                listInfo(this.queryParams).then(response => {
+                getInfoList().then(response => {
                     this.infoList = response.rows;
                     this.total = response.total;
                     this.loading = false;
@@ -245,26 +286,11 @@
             /** 提交按钮 */
             submitForm() {
                 this.$refs["form"].validate(valid => {
-                    if (valid) {
-                        if (this.form.id != null) {
-                            updateInfo(this.form).then(response => {
-                                if (response.code === 200) {
-                                    this.msgSuccess("修改成功");
-                                    this.open = false;
-                                    this.getList();
-                                }
-                            });
-                        } else {
-                            addInfo(this.form).then(response => {
-                                if (response.code === 200) {
-                                    this.msgSuccess("新增成功");
-                                    this.open = false;
-                                    this.getList();
-                                }
-                            });
-                        }
-                    }
-                });
+                    createCard(this.form).then(response => {
+                        console.log(response)
+                        this.open = false;
+                    });
+                })
             },
             /** 删除按钮操作 */
             handleDelete(row) {

@@ -1,6 +1,8 @@
 package com.zk.web.controller.kaquan;
 
 import java.util.List;
+
+import com.zk.system.domain.po.InsertCreateCardRecordPo;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -74,7 +76,7 @@ public class WxkqMustBaseInfoController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:info:add')")
     @Log(title = "微信卡券基础信息必填信息 ", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody WxkqMustBaseInfo wxkqMustBaseInfo)
+    public AjaxResult add(@RequestBody InsertCreateCardRecordPo wxkqMustBaseInfo)
     {
         return toAjax(wxkqMustBaseInfoService.insertWxkqMustBaseInfo(wxkqMustBaseInfo));
     }

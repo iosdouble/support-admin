@@ -1,4 +1,4 @@
-package com.zk.framework.weixin.domain;
+package com.zk.framework.weixin.domain.bean;
 
 import com.zk.framework.weixin.domain.bean.entity.Abstract;
 import com.zk.framework.weixin.domain.bean.entity.TextImageItem;

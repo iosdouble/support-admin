@@ -152,4 +152,32 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
         // long sec = diff % nd % nh % nm / ns;
         return day + "天" + hour + "小时" + min + "分钟";
     }
+
+
+    /**
+     * 时间转换为时间
+     * @param date
+     * @return
+     */
+    public static String dateToStamp(Date date){
+        String res;
+        long ts = date.getTime();
+        res = String.valueOf(ts);
+        return res;
+    }
+
+    /**
+     * 时间戳转换为时间
+     * @param s
+     * @return
+     */
+
+    public static String stampToDate(String s){
+        String res;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        long lt = new Long(s);
+        Date date = new Date(lt);
+        res = simpleDateFormat.format(date);
+        return res;
+    }
 }

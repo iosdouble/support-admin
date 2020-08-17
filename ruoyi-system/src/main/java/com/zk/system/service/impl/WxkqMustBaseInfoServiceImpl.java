@@ -1,6 +1,8 @@
 package com.zk.system.service.impl;
 
 import java.util.List;
+
+import com.zk.system.domain.po.InsertCreateCardRecordPo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.zk.system.mapper.WxkqMustBaseInfoMapper;
@@ -46,13 +48,13 @@ public class WxkqMustBaseInfoServiceImpl implements IWxkqMustBaseInfoService
     /**
      * 新增微信卡券基础信息必填信息 
      * 
-     * @param wxkqMustBaseInfo 微信卡券基础信息必填信息 
+     * @param insertCreateCardRecordPo 微信卡券基础信息必填信息
      * @return 结果
      */
     @Override
-    public int insertWxkqMustBaseInfo(WxkqMustBaseInfo wxkqMustBaseInfo)
+    public int insertWxkqMustBaseInfo(InsertCreateCardRecordPo insertCreateCardRecordPo)
     {
-        return wxkqMustBaseInfoMapper.insertWxkqMustBaseInfo(wxkqMustBaseInfo);
+        return wxkqMustBaseInfoMapper.insertWxkqMustBaseInfo(insertCreateCardRecordPo);
     }
 
     /**

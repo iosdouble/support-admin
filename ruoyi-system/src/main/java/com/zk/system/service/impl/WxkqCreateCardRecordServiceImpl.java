@@ -1,11 +1,14 @@
 package com.zk.system.service.impl;
 
 import com.zk.system.domain.WxkqCreateCardRecord;
+import com.zk.system.domain.WxkqCreateCardRecordExample;
 import com.zk.system.mapper.WxkqCreateCardRecordMapper;
 import com.zk.system.service.IWxkqCreateCardRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * @Classname WxkqCreateCardRecordServiceImpl
@@ -27,5 +30,11 @@ public class WxkqCreateCardRecordServiceImpl implements IWxkqCreateCardRecordSer
     public int insertRecord(WxkqCreateCardRecord wxkqCreateCardRecord) {
         int insert = wxkqCreateCardRecordMapper.insert(wxkqCreateCardRecord);
         return insert;
+    }
+
+    @Override
+    public List<WxkqCreateCardRecord> queueAll() {
+        WxkqCreateCardRecordExample example = new WxkqCreateCardRecordExample();
+        return wxkqCreateCardRecordMapper.selectByExample(example);
     }
 }

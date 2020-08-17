@@ -1,6 +1,9 @@
 package com.zk.system.service;
 
 import com.zk.system.domain.WxkqCreateCardRecord;
+import com.zk.system.domain.po.InsertCreateCardRecordPo;
+
+import java.util.List;
 
 /**
  * @Classname IWxkqCreateCardRecordService
@@ -17,4 +20,6 @@ public interface IWxkqCreateCardRecordService {
      * @return
      */
     public int insertRecord(WxkqCreateCardRecord wxkqCreateCardRecord);
+
+    public List<WxkqCreateCardRecord> queueAll();
 }
