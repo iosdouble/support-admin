@@ -21,10 +21,16 @@ import com.zk.framework.weixin.domain.bean.entity.DateInfo;
 import com.zk.framework.weixin.domain.bean.entity.SKU;
 import com.zk.framework.weixin.domain.req.*;
 import com.zk.framework.weixin.domain.resp.CreateCardSuccessResp;
+import com.zk.framework.weixin.domain.resp.LaunchCardSuccessResp;
+import com.zk.framework.weixin.domain.resp.LogoUrlSuccessResp;
 import com.zk.framework.weixin.domain.vo.CreateCardVo;
+import com.zk.framework.weixin.domain.vo.InputCodeVo;
 import com.zk.system.domain.WxkqCreateCardRecord;
+import com.zk.system.domain.WxkqLaunchCardRecord;
 import com.zk.system.service.IWxkqCreateCardRecordService;
+import com.zk.system.service.IWxkqLaunchCardRecordService;
 import com.zk.system.service.IWxkqMustBaseInfoService;
+import com.zk.system.service.IWxkqUploadImageInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -58,28 +64,35 @@ public class TokenController extends BaseController {
     @Autowired
     private IWxkqMustBaseInfoService wxkqMustBaseInfoService;
 
-//
-//    @GetMapping("/getToken")
-//    public String getToke() {
-////        launchCard();
-//
-//        // pKGjp0jNzIQqtZp9-fScdQFvGqfI
-//
-//
-//        // pWHBzswN7isz08dXtPRpw7yqqfRw
-//
+    @Autowired
+    private IWxkqUploadImageInfoService wxkqUploadImageInfoService;
+
+    @Autowired
+    private IWxkqLaunchCardRecordService wxkqLaunchCardRecordService;
+
+
+    @GetMapping("/getToken")
+    public String getToke() {
+//        launchCard();
+
+        // pKGjp0jNzIQqtZp9-fScdQFvGqfI
+
+
+        // pWHBzswN7isz08dXtPRpw7yqqfRw
+
 //        createCard();
-////        inputCode();
-////        checkCodeCount();
-////        checkCode();
-////        setTestUser();
+        inputCode();
+//        checkCodeCount();
+//        checkCode();
+//        setTestUser();
 //        getCode();
-//        return "Hello OK!";
-//    }
+//        launchCard();
+        return "Hello OK!";
+    }
 
     @PostMapping("/createCard")
     @PreAuthorize("@ss.hasPermi('system:info:add')")
-    @Log(title = "微信卡券基础信息必填信息 ", businessType = BusinessType.INSERT)
+    @Log(title = "创建卡券基本信息", businessType = BusinessType.INSERT)
     public String createCard(@RequestBody CreateCardVo createCardVo) {
         System.out.println(createCardVo.toString());
 
@@ -141,11 +154,125 @@ public class TokenController extends BaseController {
     }
 
     @GetMapping("/list")
+    @Log(title = "获取成功卡券列表", businessType = BusinessType.INSERT)
     public TableDataInfo getCreateCardInfoList(){
         startPage();
         List<WxkqCreateCardRecord> wxkqCreateCardRecords = wxkqCreateCardRecordService.queueAll();
         return getDataTable(wxkqCreateCardRecords);
     }
+
+    /**
+     * 实现图片上传功能
+     *
+     * @param file
+     * @return
+     */
+
+    @PostMapping(value = "/upload")
+    public String upload(@RequestParam(value = "file") MultipartFile file) {
+
+        AccessToken accessToken = weixinGetToken.getToken();
+
+        if (file.isEmpty()) {
+            System.out.println("文件为空");
+        }
+        String fileName = file.getOriginalFilename();
+
+        //获取到文件名并且存库
+        String suffix = fileName.substring(fileName.lastIndexOf('.'));
+        String newFileName = fileName;
+        String path = "/Users/nihui/Documents/IDEAProject/Git/RuoYi/log/";
+        File newFile = new File(path+newFileName);
+
+        try {
+            file.transferTo(newFile);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        //图片路径
+        String filepath = newFile.getAbsolutePath();
+        System.out.println("这里没有执行");
+        System.out.println(filepath);
+        //把自己的access_token放在等号后面
+        String urlStr = WXUrlConstants.UPLOAD_IMAGE+"?access_token="+accessToken.getAccess_token();
+
+        Map<String, String> textMap = new HashMap<String, String>();
+        textMap.put("name", "testname");
+        Map<String, String> fileMap = new HashMap<String, String>();
+        fileMap.put("userfile", filepath);
+        String ret = formUpload(urlStr, textMap, fileMap);
+        System.out.println(ret);
+        LogoUrlSuccessResp logoUrlSuccessResp = JsonUtil.toObject(ret,LogoUrlSuccessResp.class);
+
+        return "OK";
+    }
+
+
+    /**
+     * 创建二维码投放
+     * https://api.weixin.qq.com/card/qrcode/create?access_token=TOKEN
+     */
+    @GetMapping("/launchCard")
+    public String launchCard(@RequestParam(value = "card_id")String cardId) {
+
+        AccessToken token = weixinGetToken.getToken();
+        String url = WXUrlConstants.LAUNCH_CARD+"?access_token=" + token.getAccess_token();
+
+        LaunchCodeRsq launchCode = new LaunchCodeRsq();
+        launchCode.setAction_name("QR_CARD");
+        launchCode.setExpire_seconds(1800L);
+
+        Card card = new Card();
+        card.setCard_id(cardId);
+//        card.setCard_id("pWHBzs9bUHwU56R8idTgwyV62gXM");
+        card.setIs_unique_code(true);
+        card.setOuter_str("12b");
+        ActionInfo actionInfo = new ActionInfo();
+        actionInfo.setCard(card);
+        launchCode.setAction_info(actionInfo);
+        System.out.println(JsonUtil.toJson(launchCode));
+        String s = HttpClientUtil.sendPostJsonBody(url, JsonUtil.toJson(launchCode));
+        System.out.println(s);
+        LaunchCardSuccessResp launchCardSuccessResp = JsonUtil.toObject(s,LaunchCardSuccessResp.class);
+        WxkqLaunchCardRecord wxkqLaunchCardRecord = new WxkqLaunchCardRecord();
+        SnowflakeIdUtils snowflakeIdUtils = new SnowflakeIdUtils(1,1);
+
+        wxkqLaunchCardRecord.setId(snowflakeIdUtils.nextId());
+        wxkqLaunchCardRecord.setTicket(launchCardSuccessResp.getTicket());
+        wxkqLaunchCardRecord.setErrcode(launchCardSuccessResp.getErrcode());
+        wxkqLaunchCardRecord.setErrmsg(launchCardSuccessResp.getErrmsg());
+        wxkqLaunchCardRecord.setExpireSeconds(launchCardSuccessResp.getExpire_seconds());
+        wxkqLaunchCardRecord.setUrl(launchCardSuccessResp.getUrl());
+        wxkqLaunchCardRecord.setShowQrcodeUrl(launchCardSuccessResp.getShow_qrcode_url());
+        wxkqLaunchCardRecord.setCreateTime(new Date());
+        wxkqLaunchCardRecord.setLastUpdateTime(new Date());
+        wxkqLaunchCardRecord.setDelFlag(1);
+        wxkqLaunchCardRecord.setStatus(0);
+        wxkqLaunchCardRecordService.insertLaunchCardRecord(wxkqLaunchCardRecord);
+        return "OK";
+
+    }
+
+    @PostMapping("/inputCode")
+    public String inputCardCode(@RequestBody InputCodeVo inputCodeVo){
+        AccessToken token = weixinGetToken.getToken();
+        String url = WXUrlConstants.INPUT_CARD_CODE+"?access_token=" + token.getAccess_token();
+        InputCodeRsq inputCode = new InputCodeRsq();
+//        inputCode.setCard_id("pWHBzs9bUHwU56R8idTgwyV62gXM");
+        inputCode.setCard_id("pWHBzsyP1l8p7_Szp15SH5nv3UC4");
+        List<String> codes = new ArrayList<>();
+        SnowflakeIdUtils snowflakeIdUtils = new SnowflakeIdUtils(1, 1);
+        for (int i = 0; i < 80; i++) {
+            long l = snowflakeIdUtils.nextId();
+            codes.add(String.valueOf(l));
+        }
+        inputCode.setCode(codes);
+        String s = HttpClientUtil.sendPostJsonBody(url, JsonUtil.toJson(inputCode));
+        System.out.println(s);
+        return "OK";
+    }
+
 
     /**
      * 上传图片接口
@@ -157,7 +284,7 @@ public class TokenController extends BaseController {
         //图片路径
         String filepath = "doc/logo1.png";
         //把自己的access_token放在等号后面
-        String urlStr = "https://api.weixin.qq.com/cgi-bin/media/uploadimg?access_token=36_OaGwEyxhfkwUKF4qD5TdCNy29dxx3K1Qld1U7pRVnwVIlwMclYat1uXrhFZYUS-INQ1KNAOpc34wVRsFLvWODm0viVhFPLFCMaizD5feugE41_pt9NZyYuz_QqCdvkrQShlOShgHogp2x6a_KDCcAGAVON";
+        String urlStr = "https://api.weixin.qq.com/cgi-bin/media/uploadimg?access_token=";
 
         Map<String, String> textMap = new HashMap<String, String>();
         textMap.put("name", "testname");
@@ -166,6 +293,7 @@ public class TokenController extends BaseController {
         String ret = formUpload(urlStr, textMap, fileMap);
         System.out.println(ret);
     }
+
 
     /**
      * 上传图片
@@ -264,31 +392,7 @@ public class TokenController extends BaseController {
         return res;
     }
 
-    /**
-     * 实现图片上传功能
-     *
-     * @param file
-     * @return
-     */
-    @RequestMapping(value = "/upload")
-    public String upload(@RequestParam(value = "file") MultipartFile file) {
-        if (file.isEmpty()) {
-            System.out.println("文件为空");
-        }
-        String fileName = file.getOriginalFilename();  // 文件名
-        String filePath = "F:\\Workspase\\BackController\\src\\main\\webapp\\jsp\\pic\\"; // 上传后的路径
-        //fileName = UUID.randomUUID() + suffixName; // 存库的时候使用
-        File dest = new File(filePath + fileName);
-        if (!dest.getParentFile().exists()) {
-            dest.getParentFile().mkdirs();
-        }
-        try {
-            file.transferTo(dest);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return filePath;
-    }
+
 
 
     /**
@@ -378,10 +482,10 @@ public class TokenController extends BaseController {
         launchCode.setExpire_seconds(1800L);
 
         Card card = new Card();
-        card.setCard_id("pWHBzswN7isz08dXtPRpw7yqqfRw");
-        card.setCode("744232112244264960");
-        card.setOpenid("oFS7Fjl0WsZ9AMZqrI80nbIq8xrA");
-        card.setIs_unique_code(false);
+        card.setCard_id("pWHBzs9bUHwU56R8idTgwyV62gXM");
+//        card.setCode("744232112244264960");
+//        card.setOpenid("oFS7Fjl0WsZ9AMZqrI80nbIq8xrA");
+        card.setIs_unique_code(true);
         card.setOuter_str("12b");
         ActionInfo actionInfo = new ActionInfo();
         actionInfo.setCard(card);
@@ -389,7 +493,7 @@ public class TokenController extends BaseController {
         System.out.println(JsonUtil.toJson(launchCode));
         String s = HttpClientUtil.sendPostJsonBody(url, JsonUtil.toJson(launchCode));
         System.out.println(s);
-
+        LaunchCardSuccessResp launchCardSuccessResp = JsonUtil.toObject(s,LaunchCardSuccessResp.class);
 
     }
 
@@ -402,7 +506,8 @@ public class TokenController extends BaseController {
         AccessToken token = weixinGetToken.getToken();
         String url = "http://api.weixin.qq.com/card/code/deposit?access_token=" + token.getAccess_token();
         InputCodeRsq inputCode = new InputCodeRsq();
-        inputCode.setCard_id("pWHBzs9bUHwU56R8idTgwyV62gXM");
+//        inputCode.setCard_id("pWHBzs9bUHwU56R8idTgwyV62gXM");
+        inputCode.setCard_id("pWHBzsyP1l8p7_Szp15SH5nv3UC4");
         List<String> codes = new ArrayList<>();
         SnowflakeIdUtils snowflakeIdUtils = new SnowflakeIdUtils(1, 1);
         for (int i = 0; i < 80; i++) {

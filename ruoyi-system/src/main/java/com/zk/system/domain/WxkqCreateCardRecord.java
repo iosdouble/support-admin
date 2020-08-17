@@ -1,5 +1,7 @@
 package com.zk.system.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 
 public class WxkqCreateCardRecord {
@@ -17,6 +19,7 @@ public class WxkqCreateCardRecord {
 
     private String createBy;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:SS")
     private Date createTime;
 
     private Integer delFlag;

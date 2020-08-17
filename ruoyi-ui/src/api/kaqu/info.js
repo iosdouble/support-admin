@@ -67,3 +67,10 @@ export function getInfoList(data) {
     method: 'get',
   })
 }
+
+export function getLaunch(data) {
+  return request({
+    url: '/kaqu/launchCard?card_id='+data,
+    method: 'get',
+  })
+}

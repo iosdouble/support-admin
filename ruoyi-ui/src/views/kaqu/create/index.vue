@@ -8,7 +8,8 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['system:info:add']"
-        >新增</el-button>
+        >新增
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -18,7 +19,8 @@
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['system:info:edit']"
-        >修改</el-button>
+        >修改
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -28,7 +30,8 @@
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['system:info:remove']"
-        >删除</el-button>
+        >删除
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -37,35 +40,22 @@
           size="mini"
           @click="handleExport"
           v-hasPermi="['system:info:export']"
-        >导出</el-button>
+        >导出
+        </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
     <el-table v-loading="loading" :data="infoList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="编号" align="center" prop="id" />
-      <el-table-column label="卡券商户Logo" align="center" prop="logoUrl" />
-      <el-table-column label="码型" align="center" prop="codeType" />
-      <el-table-column label="商户名" align="center" prop="brandName" />
-      <el-table-column label="卡券名" align="center" prop="title" />
-      <el-table-column label="卡券颜色" align="center" prop="color" />
-      <el-table-column label="卡券使用提醒" align="center" prop="notice" />
-      <el-table-column label="卡券适用说明" align="center" prop="description" />
-      <el-table-column label="卡券库存数量" align="center" prop="quantity" />
-      <el-table-column label="使用时间类型" align="center" prop="type" />
-      <el-table-column label="开始时间" align="center" prop="beginTimeStamp" width="180">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.beginTimeStamp, '{y}-{m}-{d}') }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="结束时间" align="center" prop="endTimeStamp" width="180">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.endTimeStamp, '{y}-{m}-{d}') }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="领取多少时间有效" align="center" prop="fixedTerm" />
-      <el-table-column label="领取多少天开始生效" align="center" prop="fixedBeginTerm" />
+      <el-table-column type="selection" width="55" align="center"/>
+      <el-table-column label="编号" align="center" prop="id"/>
+      <el-table-column label="卡券类型" align="center" prop="cardType"/>
+      <el-table-column label="是否自定义Code" align="center" prop="useCustomCode"/>
+      <el-table-column label="错误码" align="center" prop="errcode"/>
+      <el-table-column label="错误信息" align="center" prop="errmsg"/>
+      <el-table-column label="卡券ID" align="center" prop="cardId"/>
+      <el-table-column label="创建人" align="center" prop="createBy"/>
+      <el-table-column label="创建时间" align="center" prop="createTime"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -74,14 +64,25 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:info:edit']"
-          >修改</el-button>
+          >修改
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-delete"
+            @click="handleLaunch(scope.row)"
+            v-hasPermi="['system:info:remove']"
+          >投放
+          </el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:info:remove']"
-          >删除</el-button>
+          >删除
+          </el-button>
+
         </template>
       </el-table-column>
     </el-table>
@@ -164,7 +165,17 @@
 </template>
 
 <script>
-    import { listInfo, getInfo, delInfo, addInfo, updateInfo, exportInfo ,createCard,getInfoList} from "@/api/system/info";
+    import {
+        listInfo,
+        getInfo,
+        delInfo,
+        addInfo,
+        updateInfo,
+        exportInfo,
+        createCard,
+        getInfoList,
+        getLaunch
+    } from "@/api/kaqu/info";
 
     export default {
         name: "Info",
@@ -209,8 +220,7 @@
                 // 表单参数
                 form: {},
                 // 表单校验
-                rules: {
-                }
+                rules: {}
             };
         },
         created() {
@@ -222,6 +232,7 @@
                 this.loading = true;
                 getInfoList().then(response => {
                     this.infoList = response.rows;
+                    console.log(response.rows)
                     this.total = response.total;
                     this.loading = false;
                 });
@@ -264,7 +275,7 @@
             // 多选框选中数据
             handleSelectionChange(selection) {
                 this.ids = selection.map(item => item.id)
-                this.single = selection.length!==1
+                this.single = selection.length !== 1
                 this.multiple = !selection.length
             },
             /** 新增按钮操作 */
@@ -289,6 +300,7 @@
                     createCard(this.form).then(response => {
                         console.log(response)
                         this.open = false;
+                        this.getList();
                     });
                 })
             },
@@ -299,12 +311,28 @@
                     confirmButtonText: "确定",
                     cancelButtonText: "取消",
                     type: "warning"
-                }).then(function() {
+                }).then(function () {
                     return delInfo(ids);
                 }).then(() => {
                     this.getList();
                     this.msgSuccess("删除成功");
-                }).catch(function() {});
+                }).catch(function () {
+                });
+            },
+            /** 投放 **/
+            handleLaunch(row) {
+                const ids = row.cardId ;
+                this.$confirm('是否确认投放微信卡券基础信息必填信息 编号为"' + ids + '"的数据项?', "警告", {
+                    confirmButtonText: "确定",
+                    cancelButtonText: "取消",
+                    type: "warning"
+                }).then(function () {
+                    return getLaunch(ids);
+                }).then(() => {
+                    this.getList();
+                    this.msgSuccess("投放成功");
+                }).catch(function () {
+                });
             },
             /** 导出按钮操作 */
             handleExport() {
@@ -313,11 +341,12 @@
                     confirmButtonText: "确定",
                     cancelButtonText: "取消",
                     type: "warning"
-                }).then(function() {
+                }).then(function () {
                     return exportInfo(queryParams);
                 }).then(response => {
                     this.download(response.msg);
-                }).catch(function() {});
+                }).catch(function () {
+                });
             }
         }
     };
