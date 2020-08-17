@@ -11,13 +11,13 @@ package com.zk.framework.weixin.accesstoken;
 public class AccessToken {
     private String access_token;
 
-    private Long expires_in;
+    private Integer expires_in;
 
-    public AccessToken(String access_token, Long expires_in) {
+
+    public AccessToken(String access_token, Integer expires_in) {
         this.access_token = access_token;
         this.expires_in = expires_in;
     }
-
 
     public AccessToken() {
     }
@@ -30,11 +30,11 @@ public class AccessToken {
         this.access_token = access_token;
     }
 
-    public Long getExpires_in() {
+    public Integer getExpires_in() {
         return expires_in;
     }
 
-    public void setExpires_in(Long expires_in) {
+    public void setExpires_in(Integer expires_in) {
         this.expires_in = expires_in;
     }
 }

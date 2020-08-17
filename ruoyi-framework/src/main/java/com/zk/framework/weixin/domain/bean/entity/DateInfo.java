@@ -16,6 +16,7 @@ public class DateInfo {
     // 结束时间戳
     private Long end_timestamp;
 
+
     public DateInfo(String type, Long begin_timestamp, Long end_timestamp) {
         this.type = type;
         this.begin_timestamp = begin_timestamp;

@@ -1,4 +1,4 @@
-package com.zk.framework.weixin.domain;
+package com.zk.framework.weixin.domain.req;
 
 import com.zk.framework.weixin.domain.bean.base.BaseLaunchCode;
 import com.zk.framework.weixin.domain.bean.entity.ActionInfo;
@@ -11,6 +11,6 @@ import com.zk.framework.weixin.domain.bean.entity.ActionInfo;
  * @Version 1.0
  * @Description LaunchCode @see ruoyi
  */
-public class LaunchCode extends BaseLaunchCode {
+public class LaunchCodeRsq extends BaseLaunchCode {
 
 }

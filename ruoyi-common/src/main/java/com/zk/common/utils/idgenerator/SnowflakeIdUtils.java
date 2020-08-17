@@ -1,5 +1,7 @@
 package com.zk.common.utils.idgenerator;
 
+import org.springframework.stereotype.Component;
+
 /**
  * @Classname SnowflakeIdUtils
  * @Description TODO 雪花算法ID生成器

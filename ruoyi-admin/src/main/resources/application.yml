@@ -118,7 +118,15 @@ xss:
   # 匹配链接
   urlPatterns: /system/*,/monitor/*,/tool/*
 
+
+# wx469764462f0aa5de
+# 84355acdfe404caf2a6ff9004f918dcf
+
 weixin:
   url: https://api.weixin.qq.com/cgi-bin/token
   appid: wx4f1f457374b8471e
   secret: 21b1b11412301babdd5071f3025c92cf
+#weixin:
+#  url: https://api.weixin.qq.com/cgi-bin/token
+#  appid: wx469764462f0aa5de
+#  secret: 84355acdfe404caf2a6ff9004f918dcf

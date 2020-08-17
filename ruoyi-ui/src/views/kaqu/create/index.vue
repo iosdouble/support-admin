@@ -1,119 +1,5 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="卡券商户Logo" prop="logoUrl">
-        <el-input
-          v-model="queryParams.logoUrl"
-          placeholder="请输入卡券商户Logo"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="码型" prop="codeType">
-        <el-select v-model="queryParams.codeType" placeholder="请选择码型" clearable size="small">
-          <el-option label="请选择字典生成" value="" />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="商户名" prop="brandName">
-        <el-input
-          v-model="queryParams.brandName"
-          placeholder="请输入商户名"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="卡券名" prop="title">
-        <el-input
-          v-model="queryParams.title"
-          placeholder="请输入卡券名"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="卡券颜色" prop="color">
-        <el-input
-          v-model="queryParams.color"
-          placeholder="请输入卡券颜色"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="卡券使用提醒" prop="notice">
-        <el-input
-          v-model="queryParams.notice"
-          placeholder="请输入卡券使用提醒"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="卡券适用说明" prop="description">
-        <el-input
-          v-model="queryParams.description"
-          placeholder="请输入卡券适用说明"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="卡券库存数量" prop="quantity">
-        <el-input
-          v-model="queryParams.quantity"
-          placeholder="请输入卡券库存数量"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="使用时间类型" prop="type">
-        <el-select v-model="queryParams.type" placeholder="请选择使用时间类型" clearable size="small">
-          <el-option label="请选择字典生成" value="" />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="开始时间" prop="beginTimeStamp">
-        <el-date-picker clearable size="small" style="width: 200px"
-                        v-model="queryParams.beginTimeStamp"
-                        type="date"
-                        value-format="yyyy-MM-dd"
-                        placeholder="选择开始时间">
-        </el-date-picker>
-      </el-form-item>
-      <el-form-item label="结束时间" prop="endTimeStamp">
-        <el-date-picker clearable size="small" style="width: 200px"
-                        v-model="queryParams.endTimeStamp"
-                        type="date"
-                        value-format="yyyy-MM-dd"
-                        placeholder="选择结束时间">
-        </el-date-picker>
-      </el-form-item>
-      <el-form-item label="领取多少时间有效" prop="fixedTerm">
-        <el-input
-          v-model="queryParams.fixedTerm"
-          placeholder="请输入领取多少时间有效"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="领取多少天开始生效" prop="fixedBeginTerm">
-        <el-input
-          v-model="queryParams.fixedBeginTerm"
-          placeholder="请输入领取多少天开始生效"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item>
-        <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
-      </el-form-item>
-    </el-form>
-
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
@@ -208,68 +94,31 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改微信卡券基础信息必填信息 对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="卡券商户Logo" prop="logoUrl">
-          <el-input v-model="form.logoUrl" placeholder="请输入卡券商户Logo" />
+
+      <el-form ref="form" :model="form" label-width="80px">
+        <el-form-item label="卡券类型">
+          <el-radio-group v-model="form.resource">
+            <el-radio label="折扣券"></el-radio>
+            <br>
+            <el-radio label="代金券"></el-radio>
+            <br>
+            <el-radio label="兑换券"></el-radio>
+            <br>
+            <el-radio label="团购券"></el-radio>
+            <br>
+            <el-radio label="优惠券"></el-radio>
+
+          </el-radio-group>
         </el-form-item>
-        <el-form-item label="码型">
-          <el-select v-model="form.codeType" placeholder="请选择码型">
-            <el-option label="请选择字典生成" value="" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="商户名" prop="brandName">
-          <el-input v-model="form.brandName" placeholder="请输入商户名" />
-        </el-form-item>
-        <el-form-item label="卡券名" prop="title">
-          <el-input v-model="form.title" placeholder="请输入卡券名" />
-        </el-form-item>
-        <el-form-item label="卡券颜色" prop="color">
-          <el-input v-model="form.color" placeholder="请输入卡券颜色" />
-        </el-form-item>
-        <el-form-item label="卡券使用提醒" prop="notice">
-          <el-input v-model="form.notice" placeholder="请输入卡券使用提醒" />
-        </el-form-item>
-        <el-form-item label="卡券适用说明" prop="description">
-          <el-input v-model="form.description" placeholder="请输入卡券适用说明" />
-        </el-form-item>
-        <el-form-item label="卡券库存数量" prop="quantity">
-          <el-input v-model="form.quantity" placeholder="请输入卡券库存数量" />
-        </el-form-item>
-        <el-form-item label="使用时间类型">
-          <el-select v-model="form.type" placeholder="请选择使用时间类型">
-            <el-option label="请选择字典生成" value="" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="开始时间" prop="beginTimeStamp">
-          <el-date-picker clearable size="small" style="width: 200px"
-                          v-model="form.beginTimeStamp"
-                          type="date"
-                          value-format="yyyy-MM-dd"
-                          placeholder="选择开始时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="结束时间" prop="endTimeStamp">
-          <el-date-picker clearable size="small" style="width: 200px"
-                          v-model="form.endTimeStamp"
-                          type="date"
-                          value-format="yyyy-MM-dd"
-                          placeholder="选择结束时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="领取多少时间有效" prop="fixedTerm">
-          <el-input v-model="form.fixedTerm" placeholder="请输入领取多少时间有效" />
-        </el-form-item>
-        <el-form-item label="领取多少天开始生效" prop="fixedBeginTerm">
-          <el-input v-model="form.fixedBeginTerm" placeholder="请输入领取多少天开始生效" />
+
+        <el-form-item>
+          <el-button type="primary" @click="onSubmit">立即创建</el-button>
+          <el-button>取消</el-button>
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
-      </div>
     </el-dialog>
+
   </div>
 </template>
 
@@ -381,7 +230,7 @@
             handleAdd() {
                 this.reset();
                 this.open = true;
-                this.title = "添加微信卡券基础信息必填信息 ";
+                this.title = "选择所要创建的卡券";
             },
             /** 修改按钮操作 */
             handleUpdate(row) {

@@ -11,15 +11,21 @@ import com.zk.framework.weixin.domain.bean.entity.SKU;
  * @Version 1.0
  * @Description BaseCodeInfo @see ruoyi
  */
-public abstract class BaseCodeInfo {
+public  class BaseCodeInfo {
     // 卡券商户logo
     private String logo_url;
     //码型
     private String code_type;
     // 商户名称
     private String brand_name;
+
+    //是否支持默认自定义Code 默认是false
+    private boolean use_custom_code = false;
+
+    //
+    private String get_custom_code_mode;
     // 卡券名
-    private String name;
+    private String title;
     // 卡券颜色
     private String color;
     // 卡券使用提醒
@@ -31,24 +37,25 @@ public abstract class BaseCodeInfo {
     // 使用日期
     private DateInfo date_info;
     // 失效时间
-    private Integer fixed_term;
-    // 生效时间
-    private Integer fixed_begin_term;
+//    private Integer fixed_term;
+//    // 生效时间
+//    private Integer fixed_begin_term;
 
 
-    public BaseCodeInfo(String logo_url, String code_type, String brand_name, String name, String color, String notice, String description, SKU sku, DateInfo date_info, Integer fixed_term, Integer fixed_begin_term) {
+    public BaseCodeInfo(String logo_url, String code_type, String brand_name, boolean use_custom_code, String get_custom_code_mode, String title, String color, String notice, String description, SKU sku, DateInfo date_info) {
         this.logo_url = logo_url;
         this.code_type = code_type;
         this.brand_name = brand_name;
-        this.name = name;
+        this.use_custom_code = use_custom_code;
+        this.get_custom_code_mode = get_custom_code_mode;
+        this.title = title;
         this.color = color;
         this.notice = notice;
         this.description = description;
         this.sku = sku;
         this.date_info = date_info;
-        this.fixed_term = fixed_term;
-        this.fixed_begin_term = fixed_begin_term;
     }
+
 
     public BaseCodeInfo() {
     }
@@ -77,12 +84,28 @@ public abstract class BaseCodeInfo {
         this.brand_name = brand_name;
     }
 
-    public String getName() {
-        return name;
+    public boolean isUse_custom_code() {
+        return use_custom_code;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUse_custom_code(boolean use_custom_code) {
+        this.use_custom_code = use_custom_code;
+    }
+
+    public String getGet_custom_code_mode() {
+        return get_custom_code_mode;
+    }
+
+    public void setGet_custom_code_mode(String get_custom_code_mode) {
+        this.get_custom_code_mode = get_custom_code_mode;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getColor() {
@@ -123,21 +146,5 @@ public abstract class BaseCodeInfo {
 
     public void setDate_info(DateInfo date_info) {
         this.date_info = date_info;
-    }
-
-    public Integer getFixed_term() {
-        return fixed_term;
-    }
-
-    public void setFixed_term(Integer fixed_term) {
-        this.fixed_term = fixed_term;
-    }
-
-    public Integer getFixed_begin_term() {
-        return fixed_begin_term;
-    }
-
-    public void setFixed_begin_term(Integer fixed_begin_term) {
-        this.fixed_begin_term = fixed_begin_term;
     }
 }

@@ -10,4 +10,19 @@ package com.zk.framework.weixin.domain.bean.entity;
  */
 public class ActionInfo {
     private Card card;
+
+    public ActionInfo(Card card) {
+        this.card = card;
+    }
+
+    public ActionInfo() {
+    }
+
+    public Card getCard() {
+        return card;
+    }
+
+    public void setCard(Card card) {
+        this.card = card;
+    }
 }

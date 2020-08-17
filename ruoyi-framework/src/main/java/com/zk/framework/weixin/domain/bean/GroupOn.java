@@ -1,4 +1,6 @@
-package com.zk.framework.weixin.domain;
+package com.zk.framework.weixin.domain.bean;
+
+import com.zk.framework.weixin.domain.bean.base.BaseCodeInfo;
 
 /**
  * @Classname GroupOn
@@ -9,35 +11,32 @@ package com.zk.framework.weixin.domain;
  * @Description GroupOn @see ruoyi
  */
 public class GroupOn {
-    private CodeInfo base_info;
-    private AdvancedCodeInfo advanced_info;
+    private BaseCodeInfo base_info;
+
     private String deal_detail;
 
-    public GroupOn(CodeInfo base_info, AdvancedCodeInfo advanced_info, String deal_detail) {
+    public GroupOn(CodeInfo base_info, String deal_detail) {
         this.base_info = base_info;
-        this.advanced_info = advanced_info;
+
         this.deal_detail = deal_detail;
     }
 
+
+    public GroupOn(BaseCodeInfo base_info, String deal_detail) {
+        this.base_info = base_info;
+        this.deal_detail = deal_detail;
+    }
 
     public GroupOn() {
     }
 
 
-    public CodeInfo getBase_info() {
+    public BaseCodeInfo getBase_info() {
         return base_info;
     }
 
-    public void setBase_info(CodeInfo base_info) {
+    public void setBase_info(BaseCodeInfo base_info) {
         this.base_info = base_info;
-    }
-
-    public AdvancedCodeInfo getAdvanced_info() {
-        return advanced_info;
-    }
-
-    public void setAdvanced_info(AdvancedCodeInfo advanced_info) {
-        this.advanced_info = advanced_info;
     }
 
     public String getDeal_detail() {

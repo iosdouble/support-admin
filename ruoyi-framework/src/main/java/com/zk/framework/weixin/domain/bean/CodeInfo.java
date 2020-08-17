@@ -1,4 +1,4 @@
-package com.zk.framework.weixin.domain;
+package com.zk.framework.weixin.domain.bean;
 
 import com.zk.framework.weixin.domain.bean.base.BaseCodeInfo;
 import com.zk.framework.weixin.domain.bean.entity.DateInfo;
@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * @Classname CodeInfo
- * @Description TODO
+ * @Description TODO 卡券扩展信息
  * @Date 2020/8/14 4:37 PM
  * @Created by nihui
  * @Version 1.0
@@ -45,10 +45,10 @@ public class CodeInfo extends BaseCodeInfo {
     // 卡券是否可转让
     private boolean can_give_friend = false;
 
-    public CodeInfo(String logo_url, String code_type, String brand_name, String name, String color, String notice, String description, SKU sku, DateInfo date_info, Integer fixed_term, Integer fixed_begin_term, boolean use_custom_code, String get_custom_code_mode, boolean bind_openid, String service_phone, List<Long> location_id_list, boolean use_all_locations, String center_title, String sub_center_title, Integer get_limit, Integer use_limit, boolean can_share, boolean can_give_friend) {
-        super(logo_url, code_type, brand_name, name, color, notice, description, sku, date_info, fixed_term, fixed_begin_term);
-        this.use_custom_code = use_custom_code;
-        this.get_custom_code_mode = get_custom_code_mode;
+    public CodeInfo(String logo_url, String code_type, String brand_name, boolean use_custom_code, String get_custom_code_mode, String title, String color, String notice, String description, SKU sku, DateInfo date_info, boolean use_custom_code1, String get_custom_code_mode1, boolean bind_openid, String service_phone, List<Long> location_id_list, boolean use_all_locations, String center_title, String sub_center_title, Integer get_limit, Integer use_limit, boolean can_share, boolean can_give_friend) {
+        super(logo_url, code_type, brand_name, use_custom_code, get_custom_code_mode, title, color, notice, description, sku, date_info);
+        this.use_custom_code = use_custom_code1;
+        this.get_custom_code_mode = get_custom_code_mode1;
         this.bind_openid = bind_openid;
         this.service_phone = service_phone;
         this.location_id_list = location_id_list;
