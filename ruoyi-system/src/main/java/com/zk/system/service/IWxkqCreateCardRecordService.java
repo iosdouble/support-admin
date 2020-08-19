@@ -1,7 +1,7 @@
 package com.zk.system.service;
 
 import com.zk.system.domain.WxkqCreateCardRecord;
-import com.zk.system.domain.po.InsertCreateCardRecordPo;
+import com.zk.system.domain.weixin.domain.resp.CreateCardSuccessResp;
 
 import java.util.List;
 
@@ -19,7 +19,7 @@ public interface IWxkqCreateCardRecordService {
      * 新增一条提交记录
      * @return
      */
-    public int insertRecord(WxkqCreateCardRecord wxkqCreateCardRecord);
+    public int insertRecord(CreateCardSuccessResp createCardSuccessResp);
 
     public List<WxkqCreateCardRecord> queueAll();
 }

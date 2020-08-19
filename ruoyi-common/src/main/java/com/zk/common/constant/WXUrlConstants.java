@@ -57,4 +57,15 @@ public class WXUrlConstants {
      */
     public static final String VERIFICATION_CARD = "https://api.weixin.qq.com/card/code/consume";
 
+    /**
+     * 修改库存接口
+     */
+    public static final String CHANGE_QUANTITY = "https://api.weixin.qq.com/card/modifystock";
+
+    /**
+     * 拉取卡券概况数据接口
+     */
+
+    public static final String GET_CARD_BIZUI_INFO = "https://api.weixin.qq.com/datacube/getcardbizuininfo";
+
 }

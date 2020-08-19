@@ -28,7 +28,7 @@ public class HttpClientUtil {
      * @return
      */
     public static String sendPostJsonBody(String url, String body) {
-        log.debug("[HttpClientUtil][sendPostJsonBody] 入参 url={} body={}", url, body);
+        log.debug("[HttpClientUtil] [sendPostJsonBody] 入参 url={} body={}", url, body);
  
         HttpPost httpPost = new HttpPost(url);
         httpPost.addHeader(HTTP.CONTENT_TYPE, "application/json");
@@ -42,14 +42,14 @@ public class HttpClientUtil {
             HttpResponse response = client.execute(httpPost);
             if (response.getStatusLine() != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 String result = EntityUtils.toString(response.getEntity(), "utf-8");
-                log.debug("[HttpClientUtil][sendPostJsonBody] 结果 url={} result={}", url, result);
+                log.debug("[HttpClientUtil] [sendPostJsonBody] 结果 url={} result={}", url, result);
                 return result;
             }
-            log.warn("[HttpClientUtil][sendPostJsonBody] 请求失败 response={}", url, response.toString());
+            log.warn("[HttpClientUtil] [sendPostJsonBody] 请求失败 response={}", url, response.toString());
             return "";
         }
         catch (IOException ex) {
-            log.error("[HttpClientUtil][sendPostJsonBody] 请求异常 ex={}", url, ex);
+            log.error("[HttpClientUtil] [sendPostJsonBody] 请求异常 ex={}", url, ex);
             return "";
         }
     }

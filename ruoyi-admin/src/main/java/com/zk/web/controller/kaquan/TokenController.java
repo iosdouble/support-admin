@@ -9,28 +9,21 @@ import com.zk.common.enums.BusinessType;
 import com.zk.common.utils.http.HttpClientUtil;
 import com.zk.common.utils.idgenerator.SnowflakeIdUtils;
 import com.zk.common.utils.json.JsonUtil;
-import com.zk.framework.weixin.domain.bean.GroupOn;
-import com.zk.framework.weixin.domain.req.CardRsq;
-import com.zk.framework.weixin.domain.bean.CreateCard;
-import com.zk.framework.weixin.accesstoken.AccessToken;
-import com.zk.framework.weixin.accesstoken.WeixinGetToken;
-import com.zk.framework.weixin.domain.bean.base.BaseCodeInfo;
-import com.zk.framework.weixin.domain.bean.entity.ActionInfo;
-import com.zk.framework.weixin.domain.bean.entity.Card;
-import com.zk.framework.weixin.domain.bean.entity.DateInfo;
-import com.zk.framework.weixin.domain.bean.entity.SKU;
-import com.zk.framework.weixin.domain.req.*;
-import com.zk.framework.weixin.domain.resp.CreateCardSuccessResp;
-import com.zk.framework.weixin.domain.resp.LaunchCardSuccessResp;
-import com.zk.framework.weixin.domain.resp.LogoUrlSuccessResp;
-import com.zk.framework.weixin.domain.vo.CreateCardVo;
-import com.zk.framework.weixin.domain.vo.InputCodeVo;
+import com.zk.system.domain.weixin.domain.bean.GroupOn;
+import com.zk.system.domain.weixin.domain.bean.entity.*;
+import com.zk.system.domain.weixin.domain.req.CardRsq;
+import com.zk.system.domain.weixin.domain.bean.CreateCard;
+import com.zk.system.domain.weixin.accesstoken.AccessToken;
+import com.zk.system.domain.weixin.accesstoken.WeixinGetToken;
+import com.zk.system.domain.weixin.domain.bean.base.BaseCodeInfo;
+import com.zk.system.domain.weixin.domain.req.*;
+import com.zk.system.domain.weixin.domain.resp.LaunchCardSuccessResp;
+import com.zk.system.domain.weixin.domain.resp.LogoUrlSuccessResp;
+import com.zk.system.domain.weixin.domain.vo.CreateCardVo;
+import com.zk.system.domain.weixin.domain.vo.InputCodeVo;
 import com.zk.system.domain.WxkqCreateCardRecord;
 import com.zk.system.domain.WxkqLaunchCardRecord;
-import com.zk.system.service.IWxkqCreateCardRecordService;
-import com.zk.system.service.IWxkqLaunchCardRecordService;
-import com.zk.system.service.IWxkqMustBaseInfoService;
-import com.zk.system.service.IWxkqUploadImageInfoService;
+import com.zk.system.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -70,6 +63,9 @@ public class TokenController extends BaseController {
     @Autowired
     private IWxkqLaunchCardRecordService wxkqLaunchCardRecordService;
 
+    @Autowired
+    private IWxkqGetCardStatusRecordService wxkqGetCardStatusRecordService;
+
 
     @GetMapping("/getToken")
     public String getToke() {
@@ -81,77 +77,82 @@ public class TokenController extends BaseController {
         // pWHBzswN7isz08dXtPRpw7yqqfRw
 
 //        createCard();
-        inputCode();
+//        inputCode();
 //        checkCodeCount();
 //        checkCode();
 //        setTestUser();
 //        getCode();
 //        launchCard();
+//        String cardDetailsInfo = getCardDetailsInfo();
+//        System.out.println(cardDetailsInfo);
+
+//        getConsumeCard();
+        getCardBizuinfo();
         return "Hello OK!";
     }
 
-    @PostMapping("/createCard")
-    @PreAuthorize("@ss.hasPermi('system:info:add')")
-    @Log(title = "创建卡券基本信息", businessType = BusinessType.INSERT)
-    public String createCard(@RequestBody CreateCardVo createCardVo) {
-        System.out.println(createCardVo.toString());
-
-        AccessToken token = weixinGetToken.getToken();
-        String url = WXUrlConstants.CREATE_CARD + "?access_token=" + token.getAccess_token();
-
-        SKU sku = new SKU(0);
-        DateInfo dateInfo = new DateInfo();
-        dateInfo.setType("DATE_TYPE_FIX_TIME_RANGE");
-        dateInfo.setBegin_timestamp(1578670800L);
-        dateInfo.setEnd_timestamp(1602344400L);
-
-        BaseCodeInfo baseCodeInfo = new BaseCodeInfo();
-        baseCodeInfo.setLogo_url("http://mmbiz.qpic.cn/mmbiz_png/B3zBXUpXXBX3y9ibfqWvN7NerZ86CtjT960IjMMOaiaEaNHjBPBicaGo6tMtIn0rqUJp4wuR24PjcO5WgLbNlJORQ/0");
-        baseCodeInfo.setCode_type(WXcodeTypeConstants.CODE_TYPE_QRCODE);
-        baseCodeInfo.setTitle("微信卡券");
-        baseCodeInfo.setBrand_name("微信餐厅");
-        baseCodeInfo.setColor("Color010");
-        baseCodeInfo.setNotice("使用时向服务员出示此券");
-        baseCodeInfo.setDescription("不可与其他优惠同享");
-        baseCodeInfo.setUse_custom_code(true);
-        baseCodeInfo.setGet_custom_code_mode("GET_CUSTOM_CODE_MODE_DEPOSIT");
-        baseCodeInfo.setSku(sku);
-        baseCodeInfo.setDate_info(dateInfo);
-        GroupOn groupOn = new GroupOn();
-        groupOn.setDeal_detail("示例");
-        groupOn.setBase_info(baseCodeInfo);
-        CardRsq card = new CardRsq();
-        card.setGroupon(groupOn);
-        card.setCard_type("GROUPON");
-        CreateCard createCard = new CreateCard();
-        createCard.setCard(card);
-        System.out.println(JsonUtil.toJson(createCard));
-        String str = JsonUtil.toJson(createCard);
-
-
-        WxkqCreateCardRecord wxkqCreateCardRecord = new WxkqCreateCardRecord();
-
-        String s1 = HttpClientUtil.sendPostJsonBody(url, str);
-        CreateCardSuccessResp createCardSuccessResp = JsonUtil.toObject(s1, CreateCardSuccessResp.class);
-        SnowflakeIdUtils snowflakeIdUtils = new SnowflakeIdUtils(1, 1);
-        wxkqCreateCardRecord.setId(snowflakeIdUtils.nextId());
-        wxkqCreateCardRecord.setCardId(createCardSuccessResp.getCard_id());
-        wxkqCreateCardRecord.setCardType(card.getCard_type());
-        wxkqCreateCardRecord.setCreateBy("system");
-        wxkqCreateCardRecord.setUseCustomCode(0);
-        wxkqCreateCardRecord.setCreateTime(new Date());
-        wxkqCreateCardRecord.setErrcode(createCardSuccessResp.getErrcode());
-        wxkqCreateCardRecord.setErrmsg(createCardSuccessResp.getErrmsg());
-        wxkqCreateCardRecord.setCardId(createCardSuccessResp.getCard_id());
-        wxkqCreateCardRecord.setStatus(0);
-        wxkqCreateCardRecord.setDelFlag(0);
-        wxkqCreateCardRecordService.insertRecord(wxkqCreateCardRecord);
-
-
-        System.out.println(s1);
-
-        return "OK";
-    }
+//    @PostMapping("/createCard")
+//    @PreAuthorize("@ss.hasPermi('system:info:add')")
+//    @Log(title = "创建卡券基本信息", businessType = BusinessType.INSERT)
+//    public String createCard(@RequestBody CreateCardVo createCardVo) {
+//        System.out.println(createCardVo.toString());
+//
+//        AccessToken token = weixinGetToken.getToken();
+//        String url = WXUrlConstants.CREATE_CARD + "?access_token=" + token.getAccess_token();
+//
+//        SKU sku = new SKU(0);
+//        DateInfo dateInfo = new DateInfo();
+//        dateInfo.setType("DATE_TYPE_FIX_TIME_RANGE");
+//        dateInfo.setBegin_timestamp(1578670800L);
+//        dateInfo.setEnd_timestamp(1602344400L);
+//
+//        BaseCodeInfo baseCodeInfo = new BaseCodeInfo();
+//        baseCodeInfo.setLogo_url("http://mmbiz.qpic.cn/mmbiz_png/B3zBXUpXXBX3y9ibfqWvN7NerZ86CtjT960IjMMOaiaEaNHjBPBicaGo6tMtIn0rqUJp4wuR24PjcO5WgLbNlJORQ/0");
+//        baseCodeInfo.setCode_type(WXcodeTypeConstants.CODE_TYPE_QRCODE);
+//        baseCodeInfo.setTitle("微信卡券");
+//        baseCodeInfo.setBrand_name("微信餐厅");
+//        baseCodeInfo.setColor("Color010");
+//        baseCodeInfo.setNotice("使用时向服务员出示此券");
+//        baseCodeInfo.setDescription("不可与其他优惠同享");
+//        baseCodeInfo.setUse_custom_code(true);
+//        baseCodeInfo.setGet_custom_code_mode("GET_CUSTOM_CODE_MODE_DEPOSIT");
+//        baseCodeInfo.setSku(sku);
+//        baseCodeInfo.setDate_info(dateInfo);
+//        GroupOn groupOn = new GroupOn();
+//        groupOn.setDeal_detail("示例");
+//        groupOn.setBase_info(baseCodeInfo);
+//        CardRsq card = new CardRsq();
+//        card.setGroupon(groupOn);
+//        card.setCard_type("GROUPON");
+//        CreateCard createCard = new CreateCard();
+//        createCard.setCard(card);
+//        System.out.println(JsonUtil.toJson(createCard));
+//        String str = JsonUtil.toJson(createCard);
+//
+//
+//        WxkqCreateCardRecord wxkqCreateCardRecord = new WxkqCreateCardRecord();
+//
+//        String s1 = HttpClientUtil.sendPostJsonBody(url, str);
+//        CreateCardSuccessResp createCardSuccessResp = JsonUtil.toObject(s1, CreateCardSuccessResp.class);
+//        SnowflakeIdUtils snowflakeIdUtils = new SnowflakeIdUtils(1, 1);
+//        wxkqCreateCardRecord.setId(snowflakeIdUtils.nextId());
+//        wxkqCreateCardRecord.setCardId(createCardSuccessResp.getCard_id());
+//        wxkqCreateCardRecord.setCardType(card.getCard_type());
+//        wxkqCreateCardRecord.setCreateBy("system");
+//        wxkqCreateCardRecord.setUseCustomCode(0);
+//        wxkqCreateCardRecord.setCreateTime(new Date());
+//        wxkqCreateCardRecord.setErrcode(createCardSuccessResp.getErrcode());
+//        wxkqCreateCardRecord.setErrmsg(createCardSuccessResp.getErrmsg());
+//        wxkqCreateCardRecord.setCardId(createCardSuccessResp.getCard_id());
+//        wxkqCreateCardRecord.setStatus(0);
+//        wxkqCreateCardRecord.setDelFlag(0);
+//        wxkqCreateCardRecordService.insertRecord(wxkqCreateCardRecord);
+//
+//
+//        System.out.println(s1);
+//
+//        return "OK";
+//    }
 
     @GetMapping("/list")
     @Log(title = "获取成功卡券列表", businessType = BusinessType.INSERT)
@@ -260,10 +261,11 @@ public class TokenController extends BaseController {
         String url = WXUrlConstants.INPUT_CARD_CODE+"?access_token=" + token.getAccess_token();
         InputCodeRsq inputCode = new InputCodeRsq();
 //        inputCode.setCard_id("pWHBzs9bUHwU56R8idTgwyV62gXM");
-        inputCode.setCard_id("pWHBzsyP1l8p7_Szp15SH5nv3UC4");
+        inputCode.setCard_id(inputCodeVo.getCard_id());
+        int count = inputCodeVo.getQuantity()>100?100:inputCodeVo.getQuantity();
         List<String> codes = new ArrayList<>();
         SnowflakeIdUtils snowflakeIdUtils = new SnowflakeIdUtils(1, 1);
-        for (int i = 0; i < 80; i++) {
+        for (int i = 0; i < count; i++) {
             long l = snowflakeIdUtils.nextId();
             codes.add(String.valueOf(l));
         }
@@ -272,6 +274,48 @@ public class TokenController extends BaseController {
         System.out.println(s);
         return "OK";
     }
+
+//    @PostMapping("/cardConsume")
+
+//    @GetMapping("/getCardDetails")
+    public String getCardDetailsInfo(){
+        AccessToken token = weixinGetToken.getToken();
+        String url = WXUrlConstants.QUEUE_CARD_STATUS+"?access_token=" + token.getAccess_token();
+
+
+        GetCardReq getCardReq = new GetCardReq();
+        getCardReq.setCard_id("pWHBzs9bUHwU56R8idTgwyV62gXM");
+        getCardReq.setCode("744236683645554688");
+        getCardReq.setCheck_consume(true);
+
+        String s = HttpClientUtil.sendPostJsonBody(url, JsonUtil.toJson(getCardReq));
+        System.out.println(s);
+
+//        GetCardDetailSuccessResp getCardDetailSuccessResp = JsonUtil.toObject(s,GetCardDetailSuccessResp.class);
+//
+//        WxkqGetCardStatusRecord wxkqGetCardStatusRecord = new WxkqGetCardStatusRecord();
+//        SnowflakeIdUtils snowflakeIdUtils = new SnowflakeIdUtils(1,1);
+//        wxkqGetCardStatusRecord.setId(snowflakeIdUtils.nextId());
+//        wxkqGetCardStatusRecord.setErrcode(getCardDetailSuccessResp.getErrcode());
+//        wxkqGetCardStatusRecord.setErrmsg(getCardDetailSuccessResp.getErrmsg());
+//        wxkqGetCardStatusRecord.setCardId(getCardDetailSuccessResp.getCard().getCard_id());
+//        wxkqGetCardStatusRecord.setBeginTime(String.valueOf(getCardDetailSuccessResp.getCard().getBegin_time()));
+//        wxkqGetCardStatusRecord.setEndTime(String.valueOf(getCardDetailSuccessResp.getCard().getEnd_time()));
+//        wxkqGetCardStatusRecord.setCode(Long.valueOf(getCardDetailSuccessResp.getCard().getCode()));
+//        wxkqGetCardStatusRecord.setOpenid(getCardDetailSuccessResp.getOpenid());
+//        if (getCardDetailSuccessResp.getCan_consume()){
+//            wxkqGetCardStatusRecord.setCanConsume(1);
+//        }else {
+//            wxkqGetCardStatusRecord.setCanConsume(0);
+//        }
+//        wxkqGetCardStatusRecord.setUserCardStatus(1);
+//        wxkqGetCardStatusRecord.setOuterStr(getCardDetailSuccessResp.getOuter_str());
+//        wxkqGetCardStatusRecord.setUnionid(getCardDetailSuccessResp.getUnionid());
+//        wxkqGetCardStatusRecordService.insertCardStatusRecord(wxkqGetCardStatusRecord);
+
+        return "OK";
+    }
+
 
 
     /**
@@ -401,67 +445,67 @@ public class TokenController extends BaseController {
      * https://api.weixin.qq.com/card/create?access_token=ACCESS_TOKEN
      */
 
-    public void createCard() {
-        AccessToken token = weixinGetToken.getToken();
-        String url = "https://api.weixin.qq.com/card/create?access_token=" + token.getAccess_token();
-
-        SKU sku = new SKU(0);
-        DateInfo dateInfo = new DateInfo();
-        dateInfo.setType("DATE_TYPE_FIX_TIME_RANGE");
-        dateInfo.setBegin_timestamp(1578670800L);
-        dateInfo.setEnd_timestamp(1602344400L);
-
-        BaseCodeInfo baseCodeInfo = new BaseCodeInfo();
-        baseCodeInfo.setLogo_url("http://mmbiz.qpic.cn/mmbiz_png/B3zBXUpXXBX3y9ibfqWvN7NerZ86CtjT960IjMMOaiaEaNHjBPBicaGo6tMtIn0rqUJp4wuR24PjcO5WgLbNlJORQ/0");
-//        baseCodeInfo.setCode_type("CODE_TYPE_TEXT");
-        baseCodeInfo.setTitle("微信卡券");
-        baseCodeInfo.setBrand_name("微信餐厅");
-        baseCodeInfo.setColor("Color010");
-        baseCodeInfo.setNotice("使用时向服务员出示此券");
-        baseCodeInfo.setDescription("不可与其他优惠同享");
-        baseCodeInfo.setUse_custom_code(true);
-        baseCodeInfo.setGet_custom_code_mode("GET_CUSTOM_CODE_MODE_DEPOSIT");
-        baseCodeInfo.setSku(sku);
-        baseCodeInfo.setDate_info(dateInfo);
-        GroupOn groupOn = new GroupOn();
-        groupOn.setDeal_detail("示例");
-        groupOn.setBase_info(baseCodeInfo);
-        CardRsq card = new CardRsq();
-        card.setGroupon(groupOn);
-        card.setCard_type("GROUPON");
-        CreateCard createCard = new CreateCard();
-        createCard.setCard(card);
-        System.out.println(JsonUtil.toJson(createCard));
-        String str = JsonUtil.toJson(createCard);
-
-
-        WxkqCreateCardRecord wxkqCreateCardRecord = new WxkqCreateCardRecord();
-        try {
-            String s1 = HttpClientUtil.sendPostJsonBody(url, str);
-            CreateCardSuccessResp createCardSuccessResp = JsonUtil.toObject(s1, CreateCardSuccessResp.class);
-            SnowflakeIdUtils snowflakeIdUtils = new SnowflakeIdUtils(1, 1);
-            wxkqCreateCardRecord.setId(snowflakeIdUtils.nextId());
-            wxkqCreateCardRecord.setCardId(createCardSuccessResp.getCard_id());
-            wxkqCreateCardRecord.setCardType(card.getCard_type());
-            wxkqCreateCardRecord.setCreateBy("system");
-            wxkqCreateCardRecord.setUseCustomCode(0);
-            wxkqCreateCardRecord.setCreateTime(new Date());
-            wxkqCreateCardRecord.setErrcode(createCardSuccessResp.getErrcode());
-            wxkqCreateCardRecord.setErrmsg(createCardSuccessResp.getErrmsg());
-            wxkqCreateCardRecord.setCardId(createCardSuccessResp.getCard_id());
-            wxkqCreateCardRecord.setStatus(0);
-            wxkqCreateCardRecord.setDelFlag(0);
-            wxkqCreateCardRecordService.insertRecord(wxkqCreateCardRecord);
-
-
-            System.out.println(s1);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
-    }
+//    public void createCard() {
+//        AccessToken token = weixinGetToken.getToken();
+//        String url = "https://api.weixin.qq.com/card/create?access_token=" + token.getAccess_token();
+//
+//        SKU sku = new SKU(0);
+//        DateInfo dateInfo = new DateInfo();
+//        dateInfo.setType("DATE_TYPE_FIX_TIME_RANGE");
+//        dateInfo.setBegin_timestamp(1578670800L);
+//        dateInfo.setEnd_timestamp(1602344400L);
+//
+//        BaseCodeInfo baseCodeInfo = new BaseCodeInfo();
+//        baseCodeInfo.setLogo_url("http://mmbiz.qpic.cn/mmbiz_png/B3zBXUpXXBX3y9ibfqWvN7NerZ86CtjT960IjMMOaiaEaNHjBPBicaGo6tMtIn0rqUJp4wuR24PjcO5WgLbNlJORQ/0");
+////        baseCodeInfo.setCode_type("CODE_TYPE_TEXT");
+//        baseCodeInfo.setTitle("微信卡券");
+//        baseCodeInfo.setBrand_name("微信餐厅");
+//        baseCodeInfo.setColor("Color010");
+//        baseCodeInfo.setNotice("使用时向服务员出示此券");
+//        baseCodeInfo.setDescription("不可与其他优惠同享");
+//        baseCodeInfo.setUse_custom_code(true);
+//        baseCodeInfo.setGet_custom_code_mode("GET_CUSTOM_CODE_MODE_DEPOSIT");
+//        baseCodeInfo.setSku(sku);
+//        baseCodeInfo.setDate_info(dateInfo);
+//        GroupOn groupOn = new GroupOn();
+//        groupOn.setDeal_detail("示例");
+//        groupOn.setBase_info(baseCodeInfo);
+//        CardRsq card = new CardRsq();
+//        card.setGroupon(groupOn);
+//        card.setCard_type("GROUPON");
+//        CreateCard createCard = new CreateCard();
+//        createCard.setCard(card);
+//        System.out.println(JsonUtil.toJson(createCard));
+//        String str = JsonUtil.toJson(createCard);
+//
+//
+//        WxkqCreateCardRecord wxkqCreateCardRecord = new WxkqCreateCardRecord();
+//        try {
+//            String s1 = HttpClientUtil.sendPostJsonBody(url, str);
+//            CreateCardSuccessResp createCardSuccessResp = JsonUtil.toObject(s1, CreateCardSuccessResp.class);
+//            SnowflakeIdUtils snowflakeIdUtils = new SnowflakeIdUtils(1, 1);
+//            wxkqCreateCardRecord.setId(snowflakeIdUtils.nextId());
+//            wxkqCreateCardRecord.setCardId(createCardSuccessResp.getCard_id());
+//            wxkqCreateCardRecord.setCardType(card.getCard_type());
+//            wxkqCreateCardRecord.setCreateBy("system");
+//            wxkqCreateCardRecord.setUseCustomCode(0);
+//            wxkqCreateCardRecord.setCreateTime(new Date());
+//            wxkqCreateCardRecord.setErrcode(createCardSuccessResp.getErrcode());
+//            wxkqCreateCardRecord.setErrmsg(createCardSuccessResp.getErrmsg());
+//            wxkqCreateCardRecord.setCardId(createCardSuccessResp.getCard_id());
+//            wxkqCreateCardRecord.setStatus(0);
+//            wxkqCreateCardRecord.setDelFlag(0);
+//            wxkqCreateCardRecordService.insertRecord(wxkqCreateCardRecord);
+//
+//
+//            System.out.println(s1);
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//
+//    }
     /**
      * 配置审核通过接口
      */
@@ -570,20 +614,18 @@ public class TokenController extends BaseController {
      * 查询卡券是否成功
      * https://api.weixin.qq.com/card/code/get?access_token=TOKEN
      */
-
     public void getCode() {
-
         AccessToken token = weixinGetToken.getToken();
         String url = "https://api.weixin.qq.com/card/code/get?access_token=" + token.getAccess_token();
 
 
-//        GetCardReq getCardReq = new GetCardReq();
-//        getCardReq.setCard_id("pWHBzs9bUHwU56R8idTgwyV62gXM");
-//        getCardReq.setCode("744236683645554766");
-//        getCardReq.setCheck_consume(true);
-//
-//        String s = HttpClientUtil.sendPostJsonBody(url, JsonUtil.toJson(getCardReq));
-//        System.out.println(s);
+        GetCardReq getCardReq = new GetCardReq();
+        getCardReq.setCard_id("pWHBzs9bUHwU56R8idTgwyV62gXM");
+        getCardReq.setCode("744236683645554688");
+        getCardReq.setCheck_consume(true);
+
+        String s = HttpClientUtil.sendPostJsonBody(url, JsonUtil.toJson(getCardReq));
+        System.out.println(s);
 
     }
 
@@ -616,4 +658,38 @@ public class TokenController extends BaseController {
      *
      * https://api.weixin.qq.com/card/code/consume?access_token=TOKEN
      */
+
+    public void getConsumeCard(){
+        AccessToken token = weixinGetToken.getToken();
+        String url = "https://api.weixin.qq.com/card/code/consume?access_token=" + token.getAccess_token();
+
+        ConsumeCardReq consumeCardReq = new ConsumeCardReq();
+        consumeCardReq.setCard_id("pWHBzs9bUHwU56R8idTgwyV62gXM");
+        consumeCardReq.setCode("744236683645554688");
+
+        String s = HttpClientUtil.sendPostJsonBody(url, JsonUtil.toJson(consumeCardReq));
+        System.out.println(s);
+    }
+
+    /**
+     * 获取卡券概况数据
+     *
+     * https://api.weixin.qq.com/datacube/getcardbizuininfo?access_token=ACCESS_TOKEN
+     */
+    public void getCardBizuinfo(){
+
+        AccessToken token = weixinGetToken.getToken();
+        String url = "https://api.weixin.qq.com/datacube/getcardbizuininfo?access_token=" + token.getAccess_token();
+
+        GetCardBizuInfoReq getCardBizuInfoReq = new GetCardBizuInfoReq();
+
+        getCardBizuInfoReq.setBegin_date("2020-08-10");
+        getCardBizuInfoReq.setEnd_date("2020-08-18");
+        getCardBizuInfoReq.setCond_source(1);
+        System.out.println(JsonUtil.toJson(getCardBizuInfoReq));
+        String s = HttpClientUtil.sendPostJsonBody(url, JsonUtil.toJson(getCardBizuInfoReq));
+        System.out.println(s);
+
+
+    }
 }
