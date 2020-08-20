@@ -1,5 +1,10 @@
 package com.zk.system.service;
 
+import com.zk.system.domain.WxkqUploadImageInfo;
+import com.zk.system.domain.weixin.domain.vo.UploadImageVo;
+
+import java.util.List;
+
 /**
  * @Classname IWxkqUploadImageInfoService
  * @Description TODO
@@ -11,4 +16,6 @@ package com.zk.system.service;
 public interface IWxkqUploadImageInfoService {
 
     public int insertUploadImageInfo();
+
+    public List<WxkqUploadImageInfo> getImageList();
 }

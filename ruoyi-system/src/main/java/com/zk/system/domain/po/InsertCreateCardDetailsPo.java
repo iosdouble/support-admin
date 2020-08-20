@@ -10,6 +10,8 @@ package com.zk.system.domain.po;
  */
 public class InsertCreateCardDetailsPo {
 
+    //操作ID
+    private Long optionId;
     // 卡券类型
     private String cardType;
     // 请求详情
@@ -17,13 +19,23 @@ public class InsertCreateCardDetailsPo {
     // 创建人
     private String createBy;
 
-    public InsertCreateCardDetailsPo(String cardType, String detail, String createBy) {
+
+    public InsertCreateCardDetailsPo() {
+    }
+
+    public InsertCreateCardDetailsPo(Long optionId, String cardType, String detail, String createBy) {
+        this.optionId = optionId;
         this.cardType = cardType;
         this.detail = detail;
         this.createBy = createBy;
     }
 
-    public InsertCreateCardDetailsPo() {
+    public Long getOptionId() {
+        return optionId;
+    }
+
+    public void setOptionId(Long optionId) {
+        this.optionId = optionId;
     }
 
     public String getCardType() {

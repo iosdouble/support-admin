@@ -130,3 +130,9 @@ weixin:
   url: https://api.weixin.qq.com/cgi-bin/token
   appid: wx469764462f0aa5de
   secret: 84355acdfe404caf2a6ff9004f918dcf
+
+# /Users/nihui/Documents/IDEAProject/Git/RuoYi/log/
+#local.image.path
+local:
+  image:
+    path: /Users/nihui/Documents/IDEAProject/Git/RuoYi/log/

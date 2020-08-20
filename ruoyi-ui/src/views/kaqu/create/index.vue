@@ -48,16 +48,25 @@
 
     <el-table v-loading="loading" :data="infoList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-<!--      <el-table-column label="编号" align="center" width="200" prop="id"/>-->
-      <el-table-column label="卡券类型" align="center" prop="cardType"/>
-<!--      <el-table-column label="是否自定义Code" align="center" prop="useCustomCode"/>-->
-      <el-table-column label="错误码" align="center" prop="errcode"/>
-      <el-table-column label="错误信息" align="center" prop="errmsg"/>
+      <el-table-column label="操作编号" width="200"  align="center" prop="id"/>
       <el-table-column label="卡券ID" align="center" prop="cardId"/>
+      <el-table-column label="容量(张)" width="60" align="center" prop="quantity"/>
+
+      <el-table-column label="卡券商家" align="center" prop="brandName"/>
+      <el-table-column label="卡券标题" align="center" prop="title"/>
+
       <el-table-column label="创建人" align="center" prop="createBy"/>
       <el-table-column label="创建时间" align="center" prop="createTime"/>
       <el-table-column label="操作" align="center" width="300" class-name="small-padding fixed-width">
         <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-document-copy"
+            @click="handleDetail(scope.row)"
+            v-hasPermi="['system:info:edit']"
+          >详情
+          </el-button>
           <el-button
             size="mini"
             type="text"
@@ -69,7 +78,7 @@
           <el-button
             size="mini"
             type="text"
-            icon="el-icon-delete"
+            icon="el-icon-takeaway-box"
             @click="handleLaunch(scope.row)"
             v-hasPermi="['system:info:remove']"
           >投放
@@ -77,7 +86,7 @@
           <el-button
             size="mini"
             type="text"
-            icon="el-icon-delete"
+            icon="el-icon-sell"
             @click="handleInport(scope.row)"
             v-hasPermi="['system:info:remove']"
           >导入Code
@@ -300,6 +309,16 @@
             },
             /** 修改按钮操作 */
             handleUpdate(row) {
+                this.reset();
+                const id = row.id || this.ids
+                getInfo(id).then(response => {
+                    this.form = response.data;
+                    this.open = true;
+                    this.title = "修改微信卡券基础信息必填信息 ";
+                });
+            },
+            /** 查看详情*/
+            handleDetail(row){
                 this.reset();
                 const id = row.id || this.ids
                 getInfo(id).then(response => {

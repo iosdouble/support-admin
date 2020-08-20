@@ -19,7 +19,7 @@ public interface IWxkqCreateCardRecordService {
      * 新增一条提交记录
      * @return
      */
-    public int insertRecord(CreateCardSuccessResp createCardSuccessResp);
+    public String insertRecord(CreateCardSuccessResp createCardSuccessResp);
 
     public List<WxkqCreateCardRecord> queueAll();
 }

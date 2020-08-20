@@ -11,13 +11,12 @@ import java.util.Date;
  * @Description InsertCardBaseInfoPo @see ruoyi
  */
 public class InsertCardBaseInfoPo {
-    private Long id;
     private String card_id;
     private String code_type;
     private String brand_name;
     private String title;
     private Integer quantity;
-    private Integer use_custom_code;
+    private Boolean use_custom_code;
     private String get_custom_code_mode;
     private Date begin_time_stamp;
     private Date end_time_stamp;
@@ -26,8 +25,7 @@ public class InsertCardBaseInfoPo {
     public InsertCardBaseInfoPo() {
     }
 
-    public InsertCardBaseInfoPo(Long id, String card_id, String code_type, String brand_name, String title, Integer quantity, Integer use_custom_code, String get_custom_code_mode, Date begin_time_stamp, Date end_time_stamp, String urser_name) {
-        this.id = id;
+    public InsertCardBaseInfoPo(String card_id, String code_type, String brand_name, String title, Integer quantity, Boolean use_custom_code, String get_custom_code_mode, Date begin_time_stamp, Date end_time_stamp, String urser_name) {
         this.card_id = card_id;
         this.code_type = code_type;
         this.brand_name = brand_name;
@@ -38,14 +36,6 @@ public class InsertCardBaseInfoPo {
         this.begin_time_stamp = begin_time_stamp;
         this.end_time_stamp = end_time_stamp;
         this.urser_name = urser_name;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getCard_id() {
@@ -88,11 +78,11 @@ public class InsertCardBaseInfoPo {
         this.quantity = quantity;
     }
 
-    public Integer getUse_custom_code() {
+    public Boolean getUse_custom_code() {
         return use_custom_code;
     }
 
-    public void setUse_custom_code(Integer use_custom_code) {
+    public void setUse_custom_code(Boolean use_custom_code) {
         this.use_custom_code = use_custom_code;
     }
 

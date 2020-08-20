@@ -32,7 +32,7 @@ public class WxkqCreateCardDetailsInfoServiceImpl implements IWxkqCreateCardDeta
 
         WxkqCreateCardDetailsInfo wxkqCreateCardDetailsInfo = new WxkqCreateCardDetailsInfo();
         wxkqCreateCardDetailsInfo.setId(snowflakeIdUtils.nextId());
-        wxkqCreateCardDetailsInfo.setOptionId(snowflakeIdUtils.nextId());
+        wxkqCreateCardDetailsInfo.setOptionId(insertCreateCardDetailsPo.getOptionId());
         wxkqCreateCardDetailsInfo.setCardType(insertCreateCardDetailsPo.getCardType());
         wxkqCreateCardDetailsInfo.setCreateBy(insertCreateCardDetailsPo.getCreateBy());
         wxkqCreateCardDetailsInfo.setCreateParameterDetail(insertCreateCardDetailsPo.getDetail());

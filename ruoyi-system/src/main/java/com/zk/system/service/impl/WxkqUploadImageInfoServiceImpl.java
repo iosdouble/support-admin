@@ -1,7 +1,13 @@
 package com.zk.system.service.impl;
 
+import com.zk.system.domain.WxkqUploadImageInfo;
+import com.zk.system.domain.WxkqUploadImageInfoExample;
+import com.zk.system.mapper.WxkqUploadImageInfoMapper;
 import com.zk.system.service.IWxkqUploadImageInfoService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @Classname WxkqUploadImageInfoServiceImpl
@@ -14,8 +20,17 @@ import org.springframework.stereotype.Service;
 @Service
 public class WxkqUploadImageInfoServiceImpl implements IWxkqUploadImageInfoService {
 
+    @Autowired
+    private WxkqUploadImageInfoMapper wxkqUploadImageInfoMapper;
     @Override
     public int insertUploadImageInfo() {
         return 0;
+    }
+
+    @Override
+    public List<WxkqUploadImageInfo> getImageList() {
+        WxkqUploadImageInfoExample wxkqUploadImageInfoExample = new WxkqUploadImageInfoExample();
+        List<WxkqUploadImageInfo> wxkqUploadImageInfos = wxkqUploadImageInfoMapper.selectByExample(wxkqUploadImageInfoExample);
+        return wxkqUploadImageInfos;
     }
 }

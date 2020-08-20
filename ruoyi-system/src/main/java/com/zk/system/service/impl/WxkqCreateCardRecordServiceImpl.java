@@ -30,7 +30,7 @@ public class WxkqCreateCardRecordServiceImpl implements IWxkqCreateCardRecordSer
 
     @Transactional
     @Override
-    public int insertRecord(CreateCardSuccessResp createCardSuccessResp) {
+    public String insertRecord(CreateCardSuccessResp createCardSuccessResp) {
         WxkqCreateCardRecord wxkqCreateCardRecord = new WxkqCreateCardRecord();
         SnowflakeIdUtils snowflakeIdUtils = new SnowflakeIdUtils(1, 1);
         wxkqCreateCardRecord.setId(snowflakeIdUtils.nextId());
@@ -45,7 +45,7 @@ public class WxkqCreateCardRecordServiceImpl implements IWxkqCreateCardRecordSer
         wxkqCreateCardRecord.setStatus(0);
         wxkqCreateCardRecord.setDelFlag(0);
         int insert = wxkqCreateCardRecordMapper.insert(wxkqCreateCardRecord);
-        return insert;
+        return wxkqCreateCardRecord.getCardId();
     }
 
     @Override

@@ -1,9 +1,11 @@
 package com.zk.web.controller.kaquan;
 
 import com.zk.common.constant.WXUrlConstants;
+import com.zk.common.core.controller.BaseController;
 import com.zk.common.core.domain.AjaxResult;
 import com.zk.common.core.page.TableDataInfo;
 import com.zk.common.utils.json.JsonUtil;
+import com.zk.system.domain.WxkqUploadImageInfo;
 import com.zk.system.domain.weixin.accesstoken.AccessToken;
 import com.zk.system.domain.weixin.accesstoken.WeixinGetToken;
 import com.zk.system.domain.weixin.domain.resp.LogoUrlSuccessResp;
@@ -12,6 +14,7 @@ import com.zk.system.service.IWxkqUploadImageInfoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,6 +24,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,8 +37,11 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/logo")
-public class WxkqLogoController {
+public class WxkqLogoController extends BaseController {
 
+
+    @Value("${local.image.path}")
+    private String imagePath;
 
     private Logger logger = LoggerFactory.getLogger(WxkqLogoController.class);
 
@@ -60,7 +67,8 @@ public class WxkqLogoController {
         //获取到文件名并且存库
         String suffix = fileName.substring(fileName.lastIndexOf('.'));
         String newFileName = fileName;
-        String path = "/Users/nihui/Documents/IDEAProject/Git/RuoYi/log/";
+//        String path = "/Users/nihui/Documents/IDEAProject/Git/RuoYi/log/";
+        String path = imagePath;
         File newFile = new File(path+newFileName);
 
         try {
@@ -90,7 +98,9 @@ public class WxkqLogoController {
 
     @GetMapping("/list")
     public TableDataInfo findLogoUrlList(){
-        return null;
+        startPage();
+        List<WxkqUploadImageInfo> imageList = wxkqUploadImageInfoService.getImageList();
+        return getDataTable(imageList);
     }
 
 

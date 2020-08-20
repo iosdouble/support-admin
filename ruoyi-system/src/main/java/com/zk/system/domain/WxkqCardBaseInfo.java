@@ -1,9 +1,16 @@
 package com.zk.system.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+
+import java.io.Serializable;
 import java.util.Date;
 
-public class WxkqCardBaseInfo {
+public class WxkqCardBaseInfo implements Serializable {
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
+
 
     private String cardId;
 
@@ -25,6 +32,7 @@ public class WxkqCardBaseInfo {
 
     private String createBy;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:SS")
     private Date createTime;
 
     private String lastUpdateBy;

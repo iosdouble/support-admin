@@ -12,6 +12,7 @@ import com.zk.common.utils.DateUtils;
 import com.zk.common.utils.http.HttpClientUtil;
 import com.zk.common.utils.idgenerator.SnowflakeIdUtils;
 import com.zk.common.utils.json.JsonUtil;
+import com.zk.system.domain.WxkqCardBaseInfo;
 import com.zk.system.domain.po.InsertCardBaseInfoPo;
 import com.zk.system.domain.po.InsertCreateCardDetailsPo;
 import com.zk.system.domain.weixin.accesstoken.AccessToken;
@@ -28,6 +29,7 @@ import com.zk.system.domain.weixin.domain.vo.CreateCardVo;
 import com.zk.system.domain.WxkqCreateCardRecord;
 import com.zk.system.domain.weixin.domain.vo.InputCodeVo;
 import com.zk.system.service.*;
+import org.omg.PortableInterceptor.INACTIVE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -79,8 +82,8 @@ public class WxkqCreateCardController extends BaseController {
         SKU sku = new SKU(createCardVo.getQuantity());
         DateInfo dateInfo = new DateInfo();
         dateInfo.setType(DateInfoTypeConstants.DATE_TYPE_FIXTIME_RANGE);
-        DateUtils.dateTimeUTC(createCardVo.getStartTime());
-        DateUtils.dateTimeUTC(createCardVo.getEndTime());
+        Date startTime = DateUtils.dateTimeUTC(createCardVo.getStartTime());
+        Date endTime = DateUtils.dateTimeUTC(createCardVo.getEndTime());
         dateInfo.setBegin_timestamp(Long.valueOf(DateUtils.dateToStamp(DateUtils.dateTimeUTC(createCardVo.getStartTime()))));
         dateInfo.setEnd_timestamp(Long.valueOf(DateUtils.dateToStamp(DateUtils.dateTimeUTC(createCardVo.getEndTime()))));
 
@@ -106,29 +109,43 @@ public class WxkqCreateCardController extends BaseController {
         logger.info("init parameter body {}", JsonUtil.toJson(createCard));
 
 
+
+        String result = HttpClientUtil.sendPostJsonBody(url, JsonUtil.toJson(createCard));
+        CreateCardSuccessResp createCardSuccessResp = JsonUtil.toObject(result, CreateCardSuccessResp.class);
+
+        String insertRecord = wxkqCreateCardRecordService.insertRecord(createCardSuccessResp);
+
+        InsertCardBaseInfoPo insertCardBaseInfoPo = new InsertCardBaseInfoPo();
+
+        insertCardBaseInfoPo.setCard_id(insertRecord);
+        insertCardBaseInfoPo.setBrand_name(createCardVo.getBrandName());
+        insertCardBaseInfoPo.setCode_type(WXcodeTypeConstants.CODE_TYPE_QRCODE);
+        insertCardBaseInfoPo.setTitle(createCardVo.getTitle());
+        insertCardBaseInfoPo.setQuantity(createCardVo.getQuantity());
+        insertCardBaseInfoPo.setUse_custom_code(false);
+        insertCardBaseInfoPo.setBegin_time_stamp(startTime);
+        insertCardBaseInfoPo.setEnd_time_stamp(endTime);
+        insertCardBaseInfoPo.setUrser_name("system");
+
+        Long aLong = wxkqCardBaseInfoService.insertCardBaseInfo(insertCardBaseInfoPo);
+
         InsertCreateCardDetailsPo insertCreateCardDetailsPo = new InsertCreateCardDetailsPo();
         insertCreateCardDetailsPo.setCreateBy("system");
         insertCreateCardDetailsPo.setCardType(card.getCard_type());
         insertCreateCardDetailsPo.setDetail(JsonUtil.toJson(createCard));
+        insertCreateCardDetailsPo.setOptionId(aLong);
 
-
-
-
-        String result = HttpClientUtil.sendPostJsonBody(url, JsonUtil.toJson(createCard));
-        CreateCardSuccessResp createCardSuccessResp = JsonUtil.toObject(result, CreateCardSuccessResp.class);
-        wxkqCreateCardRecordService.insertRecord(createCardSuccessResp);
         wxkqCreateCardDetailsInfoService.insertCreateCardDetails(insertCreateCardDetailsPo);
-
 
         return AjaxResult.success("OK");
     }
 
     @GetMapping("/list")
-    @Log(title = "获取成功卡券列表", businessType = BusinessType.INSERT)
+    @Log(title = "获取卡券详情列表", businessType = BusinessType.INSERT)
     public TableDataInfo getCreateCardInfoList() {
         startPage();
-        List<WxkqCreateCardRecord> wxkqCreateCardRecords = wxkqCreateCardRecordService.queueAll();
-        return getDataTable(wxkqCreateCardRecords);
+        List<WxkqCardBaseInfo> wxkqCardBaseInfos = wxkqCardBaseInfoService.getAllInfo();
+        return getDataTable(wxkqCardBaseInfos);
     }
 
 
@@ -157,28 +174,22 @@ public class WxkqCreateCardController extends BaseController {
     }
 
 
-
-
-
     /**
-     * 2、获取创建成功卡券列表
+     * 更新卡券
+     * @return
      */
 
-    /**
-     * 3、本地存储卡券详细信息接口
-     */
-
-
-    /**
-     * 4、调用微信端查询卡券详情接口
-     */
-
+    @GetMapping("/updateCard")
+    public String updateCard(){
+        return null;
+    }
 
     /**
-     * 5、卡券更新接口
+     * 更新库存
+     * @return
      */
-
-    /**
-     * 6、导入code码操作
-     */
+    @GetMapping("/updateQuantity")
+    public String updateQuantity(){
+        return null;
+    }
 }

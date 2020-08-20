@@ -1,6 +1,10 @@
 package com.zk.system.service;
 
+import com.zk.system.domain.WxkqCardBaseInfo;
+import com.zk.system.domain.WxkqCreateCardRecord;
 import com.zk.system.domain.po.InsertCardBaseInfoPo;
+
+import java.util.List;
 
 /**
  * @Classname IWxkqCardBaseInfoService
@@ -12,5 +16,10 @@ import com.zk.system.domain.po.InsertCardBaseInfoPo;
  */
 public interface IWxkqCardBaseInfoService {
 
-    public int insertCardBaseInfo(InsertCardBaseInfoPo insertCardBaseInfoPo);
+    // 插入记录
+    public Long insertCardBaseInfo(InsertCardBaseInfoPo insertCardBaseInfoPo);
+
+    public List<WxkqCardBaseInfo> getAllInfo();
+
+
 }
