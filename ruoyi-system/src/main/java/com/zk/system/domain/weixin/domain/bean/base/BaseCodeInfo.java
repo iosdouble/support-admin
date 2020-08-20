@@ -23,7 +23,7 @@ public  class BaseCodeInfo {
     private boolean use_custom_code = false;
 
     //
-    private String get_custom_code_mode;
+//    private String get_custom_code_mode = "GET_CUSTOM_CODE_MODE_DEPOSIT";
     // 卡券名
     private String title;
     // 卡券颜色
@@ -36,28 +36,46 @@ public  class BaseCodeInfo {
     private SKU sku;
     // 使用日期
     private DateInfo date_info;
-    // 失效时间
-//    private Integer fixed_term;
-//    // 生效时间
-//    private Integer fixed_begin_term;
 
+    /**
+     * 使用限制
+     */
+    private Integer use_limit = 1;
 
-    public BaseCodeInfo(String logo_url, String code_type, String brand_name, boolean use_custom_code, String get_custom_code_mode, String title, String color, String notice, String description, SKU sku, DateInfo date_info) {
+    /**
+     * 领取限制
+     */
+    private Integer get_limit = 1;
+
+    /**
+     * 是否可分享
+     */
+    private Boolean can_share = false;
+
+    /**
+     * 是否可转赠
+     */
+    private Boolean can_give_friend = false;
+
+    public BaseCodeInfo() {
+    }
+
+    public BaseCodeInfo(String logo_url, String code_type, String brand_name, boolean use_custom_code, String get_custom_code_mode, String title, String color, String notice, String description, SKU sku, DateInfo date_info, Integer use_limit, Integer get_limit, Boolean can_share, Boolean can_give_friend) {
         this.logo_url = logo_url;
         this.code_type = code_type;
         this.brand_name = brand_name;
         this.use_custom_code = use_custom_code;
-        this.get_custom_code_mode = get_custom_code_mode;
+//        this.get_custom_code_mode = get_custom_code_mode;
         this.title = title;
         this.color = color;
         this.notice = notice;
         this.description = description;
         this.sku = sku;
         this.date_info = date_info;
-    }
-
-
-    public BaseCodeInfo() {
+        this.use_limit = use_limit;
+        this.get_limit = get_limit;
+        this.can_share = can_share;
+        this.can_give_friend = can_give_friend;
     }
 
     public String getLogo_url() {
@@ -92,13 +110,13 @@ public  class BaseCodeInfo {
         this.use_custom_code = use_custom_code;
     }
 
-    public String getGet_custom_code_mode() {
-        return get_custom_code_mode;
-    }
-
-    public void setGet_custom_code_mode(String get_custom_code_mode) {
-        this.get_custom_code_mode = get_custom_code_mode;
-    }
+//    public String getGet_custom_code_mode() {
+//        return get_custom_code_mode;
+//    }
+//
+//    public void setGet_custom_code_mode(String get_custom_code_mode) {
+//        this.get_custom_code_mode = get_custom_code_mode;
+//    }
 
     public String getTitle() {
         return title;
@@ -146,5 +164,37 @@ public  class BaseCodeInfo {
 
     public void setDate_info(DateInfo date_info) {
         this.date_info = date_info;
+    }
+
+    public Integer getUse_limit() {
+        return use_limit;
+    }
+
+    public void setUse_limit(Integer use_limit) {
+        this.use_limit = use_limit;
+    }
+
+    public Integer getGet_limit() {
+        return get_limit;
+    }
+
+    public void setGet_limit(Integer get_limit) {
+        this.get_limit = get_limit;
+    }
+
+    public Boolean getCan_share() {
+        return can_share;
+    }
+
+    public void setCan_share(Boolean can_share) {
+        this.can_share = can_share;
+    }
+
+    public Boolean getCan_give_friend() {
+        return can_give_friend;
+    }
+
+    public void setCan_give_friend(Boolean can_give_friend) {
+        this.can_give_friend = can_give_friend;
     }
 }

@@ -14,4 +14,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class WxkqUploadImageInfoServiceImpl implements IWxkqUploadImageInfoService {
 
+    @Override
+    public int insertUploadImageInfo() {
+        return 0;
+    }
 }

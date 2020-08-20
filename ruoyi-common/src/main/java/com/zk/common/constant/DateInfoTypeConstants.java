@@ -10,7 +10,7 @@ package com.zk.common.constant;
  */
 public class DateInfoTypeConstants {
 
-    public static final String DATE_TYPE_FIXTIME_RANGE = "DATE_TYPE_FIXTIME_RANGE";
+    public static final String DATE_TYPE_FIXTIME_RANGE = "DATE_TYPE_FIX_TIME_RANGE";
 
     public static final String DATE_TYPEFIXE_TERM = "DATE_TYPEFIXE_TERM";
 }

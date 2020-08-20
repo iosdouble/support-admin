@@ -1,5 +1,7 @@
 package com.zk.system.domain.weixin.domain.bean.entity;
 
+import com.zk.common.constant.DateInfoTypeConstants;
+
 /**
  * @Classname DateInfo
  * @Description TODO
@@ -10,7 +12,7 @@ package com.zk.system.domain.weixin.domain.bean.entity;
  */
 public class DateInfo {
     // 时间类型
-    private String type;
+    private String type = DateInfoTypeConstants.DATE_TYPE_FIXTIME_RANGE;
     // 开始时间戳
     private Long begin_timestamp;
     // 结束时间戳

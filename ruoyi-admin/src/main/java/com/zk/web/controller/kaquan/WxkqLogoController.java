@@ -7,6 +7,8 @@ import com.zk.common.utils.json.JsonUtil;
 import com.zk.system.domain.weixin.accesstoken.AccessToken;
 import com.zk.system.domain.weixin.accesstoken.WeixinGetToken;
 import com.zk.system.domain.weixin.domain.resp.LogoUrlSuccessResp;
+import com.zk.system.domain.weixin.domain.vo.UploadImageVo;
+import com.zk.system.service.IWxkqUploadImageInfoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,14 +35,20 @@ import java.util.Map;
 @RequestMapping("/logo")
 public class WxkqLogoController {
 
+
     private Logger logger = LoggerFactory.getLogger(WxkqLogoController.class);
+
+    @Autowired
+    private IWxkqUploadImageInfoService wxkqUploadImageInfoService;
 
 
     @Autowired
     private WeixinGetToken weixinGetToken;
 
     @PostMapping(value = "/upload")
-    public AjaxResult upload(@RequestParam(value = "file") MultipartFile file) {
+    public AjaxResult upload(UploadImageVo uploadImageVo) {
+
+        MultipartFile file = uploadImageVo.getFile();
 
         AccessToken accessToken = weixinGetToken.getToken();
 

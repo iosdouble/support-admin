@@ -55,7 +55,7 @@ export function exportInfo(query) {
 
 export function createCard(data) {
   return request({
-    url: '/kaqu/createCard',
+    url: '/card/createCard',
     method: 'post',
     data: data
   })
@@ -63,7 +63,7 @@ export function createCard(data) {
 
 export function getInfoList(data) {
   return request({
-    url: '/kaqu/list',
+    url: '/card/list',
     method: 'get',
   })
 }
@@ -71,6 +71,13 @@ export function getInfoList(data) {
 export function getLaunch(data) {
   return request({
     url: '/kaqu/launchCard?card_id='+data,
+    method: 'get',
+  })
+}
+
+export function getInputCode(data) {
+  return request({
+    url: '/card/inputCode?card_id='+data,
     method: 'get',
   })
 }

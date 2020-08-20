@@ -48,15 +48,15 @@
 
     <el-table v-loading="loading" :data="infoList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="编号" align="center" prop="id"/>
+<!--      <el-table-column label="编号" align="center" width="200" prop="id"/>-->
       <el-table-column label="卡券类型" align="center" prop="cardType"/>
-      <el-table-column label="是否自定义Code" align="center" prop="useCustomCode"/>
+<!--      <el-table-column label="是否自定义Code" align="center" prop="useCustomCode"/>-->
       <el-table-column label="错误码" align="center" prop="errcode"/>
       <el-table-column label="错误信息" align="center" prop="errmsg"/>
       <el-table-column label="卡券ID" align="center" prop="cardId"/>
       <el-table-column label="创建人" align="center" prop="createBy"/>
       <el-table-column label="创建时间" align="center" prop="createTime"/>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="300" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -73,6 +73,14 @@
             @click="handleLaunch(scope.row)"
             v-hasPermi="['system:info:remove']"
           >投放
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-delete"
+            @click="handleInport(scope.row)"
+            v-hasPermi="['system:info:remove']"
+          >导入Code
           </el-button>
           <el-button
             size="mini"
@@ -133,21 +141,21 @@
         </el-form-item>
         <el-form-item label="开始时间">
           <el-col :span="11">
-            <el-date-picker type="date" placeholder="选择日期" v-model="form.sday" style="width: 100%;"></el-date-picker>
+            <el-date-picker type="date" placeholder="选择日期" v-model="form.startTime" style="width: 100%;"></el-date-picker>
           </el-col>
-          <el-col class="line" :span="2">-</el-col>
-          <el-col :span="11">
-            <el-time-picker placeholder="选择时间" v-model="form.stime" style="width: 100%;"></el-time-picker>
-          </el-col>
+<!--          <el-col class="line" :span="2">-</el-col>-->
+<!--          <el-col :span="11">-->
+<!--            <el-time-picker placeholder="选择时间" v-model="form.startTime" style="width: 100%;"></el-time-picker>-->
+<!--          </el-col>-->
         </el-form-item>
         <el-form-item label="结束时间">
           <el-col :span="11">
-            <el-date-picker type="date" placeholder="选择日期" v-model="form.eday" style="width: 100%;"></el-date-picker>
+            <el-date-picker type="date" placeholder="选择日期" v-model="form.endTime" style="width: 100%;"></el-date-picker>
           </el-col>
-          <el-col class="line" :span="2">-</el-col>
-          <el-col :span="11">
-            <el-time-picker placeholder="选择时间" v-model="form.etime" style="width: 100%;"></el-time-picker>
-          </el-col>
+<!--          <el-col class="line" :span="2">-</el-col>-->
+<!--          <el-col :span="11">-->
+<!--            <el-time-picker placeholder="选择时间" v-model="form.endTime" style="width: 100%;"></el-time-picker>-->
+<!--          </el-col>-->
         </el-form-item>
 
         <el-form-item label="初始容量">
@@ -160,7 +168,6 @@
         </el-form-item>
       </el-form>
     </el-dialog>
-
   </div>
 </template>
 
@@ -174,13 +181,19 @@
         exportInfo,
         createCard,
         getInfoList,
-        getLaunch
+        getLaunch,
+        getInputCode
     } from "@/api/kaqu/info";
 
     export default {
         name: "Info",
         data() {
             return {
+                // 导入数据
+                inputCodeVo: {
+                    card_id: "",
+                    quantity: 0
+                },
                 // 遮罩层
                 loading: true,
                 // 选中数组
@@ -220,7 +233,8 @@
                 // 表单参数
                 form: {},
                 // 表单校验
-                rules: {}
+                rules: {},
+
             };
         },
         created() {
@@ -304,6 +318,7 @@
                     });
                 })
             },
+
             /** 删除按钮操作 */
             handleDelete(row) {
                 const ids = row.id || this.ids;
@@ -332,6 +347,25 @@
                     this.getList();
                     this.msgSuccess("投放成功");
                 }).catch(function () {
+                });
+            },
+            /** 导入Code **/
+            handleInport(row) {
+                console.log("点击按钮！")
+                const ids = row.cardId ;
+
+                console.log(this.inputCodeVo)
+                this.$confirm('是否确认投放微信卡券基础信息必填信息 编号为"' + ids + '"的数据项?', "警告", {
+                    confirmButtonText: "确定",
+                    cancelButtonText: "取消",
+                    type: "warning"
+                }).then(function () {
+                    return getInputCode(ids);
+                }).then(() => {
+                    this.getList();
+                    this.msgSuccess("导入成功");
+                }).catch(function () {
+                    console.log("抛出异常")
                 });
             },
             /** 导出按钮操作 */

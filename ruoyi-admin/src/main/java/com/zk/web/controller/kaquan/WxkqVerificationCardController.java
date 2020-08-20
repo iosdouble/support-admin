@@ -1,6 +1,7 @@
 package com.zk.web.controller.kaquan;
 
 import com.zk.common.core.controller.BaseController;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class WxkqVerificationCardController extends BaseController {
+
 
 
 }

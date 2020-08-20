@@ -50,7 +50,9 @@ public class WxkqCreateCardRecordServiceImpl implements IWxkqCreateCardRecordSer
 
     @Override
     public List<WxkqCreateCardRecord> queueAll() {
-        WxkqCreateCardRecordExample example = new WxkqCreateCardRecordExample();
-        return wxkqCreateCardRecordMapper.selectByExample(example);
+
+        WxkqCreateCardRecordExample wxkqCreateCardRecordExample = new WxkqCreateCardRecordExample();
+        wxkqCreateCardRecordExample.setOrderByClause("create_time DESC");
+        return wxkqCreateCardRecordMapper.selectByExample(wxkqCreateCardRecordExample);
     }
 }

@@ -55,9 +55,6 @@ public class TokenController extends BaseController {
     private IWxkqCreateCardRecordService wxkqCreateCardRecordService;
 
     @Autowired
-    private IWxkqMustBaseInfoService wxkqMustBaseInfoService;
-
-    @Autowired
     private IWxkqUploadImageInfoService wxkqUploadImageInfoService;
 
     @Autowired
@@ -87,7 +84,8 @@ public class TokenController extends BaseController {
 //        System.out.println(cardDetailsInfo);
 
 //        getConsumeCard();
-        getCardBizuinfo();
+//        getCardBizuinfo();
+        createCardShop();
         return "Hello OK!";
     }
 
@@ -665,7 +663,7 @@ public class TokenController extends BaseController {
 
         ConsumeCardReq consumeCardReq = new ConsumeCardReq();
         consumeCardReq.setCard_id("pWHBzs9bUHwU56R8idTgwyV62gXM");
-        consumeCardReq.setCode("744236683645554688");
+        consumeCardReq.setCode("744236683645554721");
 
         String s = HttpClientUtil.sendPostJsonBody(url, JsonUtil.toJson(consumeCardReq));
         System.out.println(s);
@@ -691,5 +689,31 @@ public class TokenController extends BaseController {
         System.out.println(s);
 
 
+    }
+
+    public void createCardShop(){
+        AccessToken token = weixinGetToken.getToken();
+        String url = "https://api.weixin.qq.com/card/landingpage/create?access_token=" + token.getAccess_token();
+
+        CardShopRsq cardShopRsq = new CardShopRsq();
+        cardShopRsq.setBanner("http://mmbiz.qpic.cn/mmbiz_png/B3zBXUpXXBX3y9ibfqWvN7NerZ86CtjT960IjMMOaiaEaNHjBPBicaGo6tMtIn0rqUJp4wuR24PjcO5WgLbNlJORQ/0");
+        cardShopRsq.setCan_share(true);
+        cardShopRsq.setPage_title("普惠服务");
+        cardShopRsq.setScene("SCENE_NEAR_BY");
+
+        CardItem cardItem = new CardItem("pWHBzsx2ZPlC64IvXYe9t4iKNwm0","null");
+        CardItem cardItem1 = new CardItem("pWHBzsyP1l8p7_Szp15SH5nv3UC4","null");
+        CardItem cardItem2 = new CardItem("pWHBzs9bUHwU56R8idTgwyV62gXM","null");
+        CardItem cardItem3 = new CardItem("pWHBzs5NLhP0MYMn4Ia1IUdrbN6s","null");
+        List<CardItem> cardItemList = new ArrayList<>();
+        cardItemList.add(cardItem);
+        cardItemList.add(cardItem1);
+        cardItemList.add(cardItem2);
+        cardItemList.add(cardItem3);
+
+        cardShopRsq.setCard_list(cardItemList);
+
+        String s = HttpClientUtil.sendPostJsonBody(url, JsonUtil.toJson(cardShopRsq));
+        System.out.println(s);
     }
 }

@@ -9,4 +9,6 @@ package com.zk.system.service;
  * @Description IWxkqUploadImageInfoService @see ruoyi
  */
 public interface IWxkqUploadImageInfoService {
+
+    public int insertUploadImageInfo();
 }

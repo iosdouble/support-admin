@@ -73,6 +73,19 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
         return new SimpleDateFormat(format).format(date);
     }
 
+    public static final Date dateTimeUTC(final String date){
+        String utc = null;
+        utc = date.replace("Z", " UTC");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS Z");
+        Date d = null;
+        try {
+            d = format.parse(utc);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return d;
+    }
+
     public static final Date dateTime(final String format, final String ts)
     {
         try
@@ -155,7 +168,7 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
 
 
     /**
-     * 时间转换为时间
+     * 时间转换为时间戳
      * @param date
      * @return
      */
@@ -163,7 +176,7 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
         String res;
         long ts = date.getTime();
         res = String.valueOf(ts);
-        return res;
+        return res.substring(0,10);
     }
 
     /**
