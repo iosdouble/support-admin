@@ -2,6 +2,12 @@ import Vue from 'vue'
 
 import Cookies from 'js-cookie'
 
+import VueQuillEditor  from 'vue-quill-editor'
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
+Vue.use(VueQuillEditor);
+
 import 'normalize.css/normalize.css' // a modern alternative to CSS resets
 
 import Element from 'element-ui'

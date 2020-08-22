@@ -1,5 +1,6 @@
 package com.zk.web.controller.kaquan;
 
+import com.alibaba.fastjson.JSONObject;
 import com.zk.common.constant.WXUrlConstants;
 import com.zk.common.core.controller.BaseController;
 import com.zk.common.utils.http.HttpClientUtil;
@@ -16,6 +17,7 @@ import com.zk.system.service.IWxkqLaunchCardRecordService;
 import com.zk.system.service.IWxkqUploadImageInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -100,7 +102,14 @@ public class WxkqManageCardController extends BaseController {
      * @return
      */
     @GetMapping("/getCardDetails")
-    public String getCardDetails(){
+    public String getCardDetails(@RequestParam(value = "card_id") String card_id){
+        AccessToken token = weixinGetToken.getToken();
+        String url =  "https://api.weixin.qq.com/card/get" + "?access_token=" + token.getAccess_token();
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("card_id",card_id);
+        String s = HttpClientUtil.sendPostJsonBody(url, jsonObject.toJSONString());
+        System.out.println(s);
+
         return null;
     }
 

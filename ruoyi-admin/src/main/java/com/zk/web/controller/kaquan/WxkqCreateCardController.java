@@ -28,6 +28,7 @@ import com.zk.system.domain.weixin.domain.resp.CreateCardSuccessResp;
 import com.zk.system.domain.weixin.domain.vo.CreateCardVo;
 import com.zk.system.domain.WxkqCreateCardRecord;
 import com.zk.system.domain.weixin.domain.vo.InputCodeVo;
+import com.zk.system.domain.weixin.domain.vo.UpdateQuantityVo;
 import com.zk.system.service.*;
 import org.omg.PortableInterceptor.INACTIVE;
 import org.slf4j.Logger;
@@ -186,10 +187,13 @@ public class WxkqCreateCardController extends BaseController {
 
     /**
      * 更新库存
+     * https://api.weixin.qq.com/card/modifystock?access_token=TOKEN
      * @return
      */
     @GetMapping("/updateQuantity")
-    public String updateQuantity(){
-        return null;
+    public AjaxResult updateQuantity(@RequestBody UpdateQuantityVo updateQuantityVo){
+
+
+        return AjaxResult.success();
     }
 }

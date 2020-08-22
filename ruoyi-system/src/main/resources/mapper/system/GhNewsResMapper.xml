@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zk.system.mapper.GhNewsResMapper">
+  <resultMap id="BaseResultMap" type="com.zk.system.domain.GhNewsRes">
+    <constructor>
+      <idArg column="new_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="apply_user_code" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="dept_code" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="apply_date_time" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="create_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="update_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="dept_name" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="status" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="del_flag" javaType="java.lang.Integer" jdbcType="INTEGER" />
+    </constructor>
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.zk.system.domain.GhNewsResWithBLOBs">
+    <constructor>
+      <idArg column="new_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="apply_user_code" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="dept_code" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="apply_date_time" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="create_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="update_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="dept_name" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="status" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="del_flag" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="new_title" javaType="java.lang.String" jdbcType="LONGVARCHAR" />
+      <arg column="new_context" javaType="java.lang.String" jdbcType="LONGVARCHAR" />
+    </constructor>
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    new_id, apply_user_code, dept_code, apply_date_time, create_time, update_time, dept_name, 
+    status, del_flag
+  </sql>
+  <sql id="Blob_Column_List">
+    new_title, new_context
+  </sql>
+  <select id="selectByExampleWithBLOBs" parameterType="com.zk.system.domain.GhNewsResExample" resultMap="ResultMapWithBLOBs">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from gh_news_res
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" parameterType="com.zk.system.domain.GhNewsResExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from gh_news_res
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from gh_news_res
+    where new_id = #{newId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from gh_news_res
+    where new_id = #{newId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.zk.system.domain.GhNewsResWithBLOBs">
+    insert into gh_news_res (new_id, apply_user_code, dept_code, 
+      apply_date_time, create_time, update_time, 
+      dept_name, status, del_flag, 
+      new_title, new_context)
+    values (#{newId,jdbcType=BIGINT}, #{applyUserCode,jdbcType=BIGINT}, #{deptCode,jdbcType=BIGINT}, 
+      #{applyDateTime,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{deptName,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{delFlag,jdbcType=INTEGER}, 
+      #{newTitle,jdbcType=LONGVARCHAR}, #{newContext,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zk.system.domain.GhNewsResWithBLOBs">
+    insert into gh_news_res
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="newId != null">
+        new_id,
+      </if>
+      <if test="applyUserCode != null">
+        apply_user_code,
+      </if>
+      <if test="deptCode != null">
+        dept_code,
+      </if>
+      <if test="applyDateTime != null">
+        apply_date_time,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="deptName != null">
+        dept_name,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="delFlag != null">
+        del_flag,
+      </if>
+      <if test="newTitle != null">
+        new_title,
+      </if>
+      <if test="newContext != null">
+        new_context,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="newId != null">
+        #{newId,jdbcType=BIGINT},
+      </if>
+      <if test="applyUserCode != null">
+        #{applyUserCode,jdbcType=BIGINT},
+      </if>
+      <if test="deptCode != null">
+        #{deptCode,jdbcType=BIGINT},
+      </if>
+      <if test="applyDateTime != null">
+        #{applyDateTime,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deptName != null">
+        #{deptName,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="delFlag != null">
+        #{delFlag,jdbcType=INTEGER},
+      </if>
+      <if test="newTitle != null">
+        #{newTitle,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="newContext != null">
+        #{newContext,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.zk.system.domain.GhNewsResExample" resultType="java.lang.Long">
+    select count(*) from gh_news_res
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update gh_news_res
+    <set>
+      <if test="record.newId != null">
+        new_id = #{record.newId,jdbcType=BIGINT},
+      </if>
+      <if test="record.applyUserCode != null">
+        apply_user_code = #{record.applyUserCode,jdbcType=BIGINT},
+      </if>
+      <if test="record.deptCode != null">
+        dept_code = #{record.deptCode,jdbcType=BIGINT},
+      </if>
+      <if test="record.applyDateTime != null">
+        apply_date_time = #{record.applyDateTime,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateTime != null">
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.deptName != null">
+        dept_name = #{record.deptName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.status != null">
+        status = #{record.status,jdbcType=INTEGER},
+      </if>
+      <if test="record.delFlag != null">
+        del_flag = #{record.delFlag,jdbcType=INTEGER},
+      </if>
+      <if test="record.newTitle != null">
+        new_title = #{record.newTitle,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="record.newContext != null">
+        new_context = #{record.newContext,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map">
+    update gh_news_res
+    set new_id = #{record.newId,jdbcType=BIGINT},
+      apply_user_code = #{record.applyUserCode,jdbcType=BIGINT},
+      dept_code = #{record.deptCode,jdbcType=BIGINT},
+      apply_date_time = #{record.applyDateTime,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      dept_name = #{record.deptName,jdbcType=VARCHAR},
+      status = #{record.status,jdbcType=INTEGER},
+      del_flag = #{record.delFlag,jdbcType=INTEGER},
+      new_title = #{record.newTitle,jdbcType=LONGVARCHAR},
+      new_context = #{record.newContext,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update gh_news_res
+    set new_id = #{record.newId,jdbcType=BIGINT},
+      apply_user_code = #{record.applyUserCode,jdbcType=BIGINT},
+      dept_code = #{record.deptCode,jdbcType=BIGINT},
+      apply_date_time = #{record.applyDateTime,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      dept_name = #{record.deptName,jdbcType=VARCHAR},
+      status = #{record.status,jdbcType=INTEGER},
+      del_flag = #{record.delFlag,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zk.system.domain.GhNewsResWithBLOBs">
+    update gh_news_res
+    <set>
+      <if test="applyUserCode != null">
+        apply_user_code = #{applyUserCode,jdbcType=BIGINT},
+      </if>
+      <if test="deptCode != null">
+        dept_code = #{deptCode,jdbcType=BIGINT},
+      </if>
+      <if test="applyDateTime != null">
+        apply_date_time = #{applyDateTime,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deptName != null">
+        dept_name = #{deptName,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="delFlag != null">
+        del_flag = #{delFlag,jdbcType=INTEGER},
+      </if>
+      <if test="newTitle != null">
+        new_title = #{newTitle,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="newContext != null">
+        new_context = #{newContext,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where new_id = #{newId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.zk.system.domain.GhNewsResWithBLOBs">
+    update gh_news_res
+    set apply_user_code = #{applyUserCode,jdbcType=BIGINT},
+      dept_code = #{deptCode,jdbcType=BIGINT},
+      apply_date_time = #{applyDateTime,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      dept_name = #{deptName,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER},
+      del_flag = #{delFlag,jdbcType=INTEGER},
+      new_title = #{newTitle,jdbcType=LONGVARCHAR},
+      new_context = #{newContext,jdbcType=LONGVARCHAR}
+    where new_id = #{newId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zk.system.domain.GhNewsRes">
+    update gh_news_res
+    set apply_user_code = #{applyUserCode,jdbcType=BIGINT},
+      dept_code = #{deptCode,jdbcType=BIGINT},
+      apply_date_time = #{applyDateTime,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      dept_name = #{deptName,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER},
+      del_flag = #{delFlag,jdbcType=INTEGER}
+    where new_id = #{newId,jdbcType=BIGINT}
+  </update>
+</mapper>
